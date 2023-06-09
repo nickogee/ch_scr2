@@ -37,11 +37,19 @@ def create_xml_str(result: list):
         url.text = offer_dct['url']
         
         price = ET.SubElement(offer, 'price')
-        price.text = str(offer_dct['cost'])
+        try:
+            price.text = str(int(offer_dct['cost']))
+        except Exception as ex:
+            price.text = '0'
+            print(ex)
         
         oldprice = ET.SubElement(offer, 'oldprice')
-        oldprice.text = str(offer_dct['prev_cost'])
-        
+        try:
+            oldprice.text = str(int(offer_dct['prev_cost']))
+        except Exception as ex:
+            oldprice.text = '0'
+            print(ex)
+          
         path = ET.SubElement(offer, 'path')
         path.text = offer_dct['category_full_path']
         

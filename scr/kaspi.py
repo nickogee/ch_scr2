@@ -5,16 +5,18 @@ from selenium.webdriver.chrome.service import Service
 import time
 import random
 import datetime
-#from parsers.share_functions import make_DataFrame, upload_to_excel
+# from constants import DIR
+DIR = 'ch_scr2'
 
 
 CATEGORY = 'Овощи, фрукты, ягоды, грибы'
-URL = 'https://kaspi.kz/shop/c/food/?q=%3AallMerchants%3AMagnum%3AavailableInZones%3AMagnum_ZONE1'
+# URL = 'https://kaspi.kz/shop/c/food/?q=%3AallMerchants%3AMagnum%3AavailableInZones%3AMagnum_ZONE1'
+# URL = 'https://kaspi.kz/shop/'
 # URL = 'https://kaspi.kz/shop/c/beauty%20care/?q=%3AallMerchants%3AMagnum%3AavailableInZones%3AMagnum_ZONE1'
-# URL = 'https://2ip.ru/'
+URL = 'https://2ip.ru/'
 
 # CHROMEDRIVER = '/Users/hachimantaro/PycharmProjects/Ch_scrp/chromedriver/chromedriver'
-CHROMEDRIVERPATH = '/Users/hachimantaro/Repo/Ch_Scr/Ch_Scr/CromeDriver/chromedriver'
+CHROMEDRIVERPATH = f'{DIR}/CromeDriver/chromedriver'
 
 
 class KaspiParser():
@@ -31,30 +33,27 @@ class KaspiParser():
         useragent = UserAgent()
 
         # options = webdriver.ChromeOptions()
-        # options.add_argument(f'user-agent={useragent.chrome}')
-        # options.add_argument('--disable-blink-features=AutomationControlled')
-        # options.add_experimental_option("excludeSwitches", ['enable-automation'])
-        # options.add_experimental_option('useAutomationExtension', False)
+        
+    
         options = webdriver.ChromeOptions()
-        options.add_argument("user-agent Mozilla/5.0 (Linux. Android ZaG; SM-6230Y BuiLd/NRD20M) AppLetebKit/532.36 (KHIML. Like Gecko).Chrome/59.0.3071.125 Mobile Safari/537.36")
+        # options.add_argument("user-agent=Mozilla/5.0 (Linux. Android ZaG; SM-6230Y BuiLd/NRD20M) AppLetebKit/532.36 (KHIML. Like Gecko).Chrome/59.0.3071.125 Mobile Safari/537.36")
+        options.add_argument(f'user-agent={useragent.chrome}')
         options.add_argument ("--disable-blink-features=AutomationControlled")
+
+        options.add_argument("--no-sandbox")
+        # options.add_argument("--headless") # запуск в фоновом режиме, без открытия окна хрома
+        options.add_argument("--disable-gpu")
+        options.add_argument('--disable-dev-shm-usage')
+
         options.add_experimental_option("excludeSwitches", ["enable automation" ])
         options.add_experimental_option ('useAutomationExtension', False)
-
-        # driver = webdriver.Chrome(service=Service(CHROMEDRIVER), options=options)
+        
         driver = webdriver.Chrome(
         executable_path=CHROMEDRIVERPATH,
         options=options
             )
         
         driver.maximize_window()
-        # driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
-        #     'source': '''
-        #         delete window.cdc_adoQpoasnfa76pfcZLmcfl_Array
-        #         delete window.cdc_adoQpoasnfa76pfcZLmcfl_Promise
-        #         delete window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol
-        #     '''
-        # })
         driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", 
                        {
                            'source': '''
@@ -135,7 +134,7 @@ class KaspiParser():
 
                     else:
                         # ищем список элементов с категориями и подкатегориями
-                        #  и возвращаемся на страницу со списком подкатегорий (кликаем по основной категории)
+                        # и возвращаемся на страницу со списком подкатегорий (кликаем по основной категории)
                         sub_category_list_ = self.__find_elements(By.CLASS_NAME, 'tree__link')
                         category_ = sub_category_list_[2]
                         category_.click()
@@ -174,7 +173,7 @@ class KaspiParser():
     #     upload_to_excel(self.df, file_name)
 
     def start(self):
-        self.make_driver()
+        # self.make_driver()
         self.search_data()
         # self.__make_DataFrame()
         # self.__upload_to_excel()
