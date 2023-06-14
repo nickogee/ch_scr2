@@ -1,4 +1,4 @@
-from constants import UPLOAD_FOLDER, MERCANTS, DB_ROW_DATA_COLUMNS_LS, DB_PATH, DB_ROW_DATA_TABLE
+from constants.constants import UPLOAD_FOLDER, MERCANTS, DB_ROW_DATA_COLUMNS_LS, DB_PATH, DB_ROW_DATA_TABLE
 from xml.etree import ElementTree as ET
 from datetime import datetime
 from scr.database_worker import read_mercant_data

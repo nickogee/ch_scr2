@@ -2,7 +2,7 @@ from scr.arbuz_fetchs import PARAMS, URL_NXT, URL_FST, PAGE, SUB_CATALOG
 import datetime
 from scr.share_functions import get_fetch, rand_pause
 from scr.database_worker import upload_to_db, get_next_categoy_abz
-from constants import DB_PATH, DB_ROW_DATA_TABLE, DB_ROW_DATA_CREATE_STR, MERCANTS,\
+from constants.constants import DB_PATH, DB_ROW_DATA_TABLE, DB_ROW_DATA_CREATE_STR, MERCANTS,\
                                 DB_ABZ_CATEGORY_CREATE_STR, DB_ABZ_CATEGORY_TABLE
 
 
