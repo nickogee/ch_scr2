@@ -2,7 +2,7 @@ from scr.glovo_fetchs import PARAMS, URL_SERV, URL_FST, SLUG
 import datetime
 from scr.share_functions import get_fetch, rand_pause
 from scr.database_worker import upload_to_db, get_next_categoy_glv
-from constants import DB_PATH, DB_ROW_DATA_TABLE, DB_ROW_DATA_CREATE_STR, MERCANTS,\
+from constants.constants import DB_PATH, DB_ROW_DATA_TABLE, DB_ROW_DATA_CREATE_STR, MERCANTS,\
                                         DB_GLV_CATEGORY_TABLE, DB_GLV_CATEGORY_CREATE_STR
                                     
 

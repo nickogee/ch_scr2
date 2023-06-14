@@ -3,17 +3,17 @@ from selenium.webdriver.common.by import By
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 import time
-import random
 import datetime
-# from constants import DIR
-DIR = 'ch_scr2'
+from constants.constants import DIR
+from scr.share_functions import rand_pause
+
 
 
 CATEGORY = 'Овощи, фрукты, ягоды, грибы'
 # URL = 'https://kaspi.kz/shop/c/food/?q=%3AallMerchants%3AMagnum%3AavailableInZones%3AMagnum_ZONE1'
-# URL = 'https://kaspi.kz/shop/'
+URL = 'https://kaspi.kz/shop/'
 # URL = 'https://kaspi.kz/shop/c/beauty%20care/?q=%3AallMerchants%3AMagnum%3AavailableInZones%3AMagnum_ZONE1'
-URL = 'https://2ip.ru/'
+# URL = 'https://2ip.ru/'
 
 # CHROMEDRIVER = '/Users/hachimantaro/PycharmProjects/Ch_scrp/chromedriver/chromedriver'
 CHROMEDRIVERPATH = f'{DIR}/CromeDriver/chromedriver'
@@ -69,8 +69,8 @@ class KaspiParser():
         self.options = options
         self.driver = driver
 
-    def rand_pause(self):
-        time.sleep(10 + random.randint(0, 10))
+    # def rand_pause(self):
+    #     time.sleep(10 + random.randint(0, 10))
 
     def __find_element(self, by, value):
         return self.driver.find_element(by, value)
@@ -81,11 +81,23 @@ class KaspiParser():
     def search_data(self):
 
         self.driver.get(URL)
-        time.sleep(100)
-        self.rand_pause()
+        # time.sleep(100)
+        rand_pause()
         Almaty = self.__find_element(By.CSS_SELECTOR, '[data-city-id="750000000"]')
         Almaty.click()
 
+        rand_pause()
+        all_categories = self.__find_element(By.CLASS_NAME, 'nav__el-link-text')
+        all_categories.click()
+
+        rand_pause()
+        all_categories_ls = self.__find_elements(By.CLASS_NAME, 'tree__item')
+        for el in all_categories_ls:
+            tree_link = el.find_element(By.CLASS_NAME, 'tree__link')
+            if tree_link.text == 'Продукты питания':
+                el.click()
+                break
+        
         category_list = self.__find_elements(By.CLASS_NAME, 'tree__link')
 
         for category in category_list:
@@ -93,7 +105,7 @@ class KaspiParser():
             # Найдена нужная категория
             if category.text == CATEGORY:
                 category.click()
-                self.rand_pause()
+                rand_pause()
 
                 # ищем список подкатегорий
                 sub_category_list = self.__find_elements(By.CLASS_NAME, 'tree__link')
@@ -108,7 +120,7 @@ class KaspiParser():
                     sub_category = sub_category_list[i]
                     sub_category_text = sub_category.text
                     sub_category.click()
-                    self.rand_pause()
+                    rand_pause()
 
                     next_page = True
                     while next_page:
@@ -138,7 +150,7 @@ class KaspiParser():
                         sub_category_list_ = self.__find_elements(By.CLASS_NAME, 'tree__link')
                         category_ = sub_category_list_[2]
                         category_.click()
-                        self.rand_pause()
+                        rand_pause()
 
                 else:
                     # все данные по искомой категории просмотрены
@@ -162,7 +174,7 @@ class KaspiParser():
             return False
         else:
             next_btn.click()
-            self.rand_pause()
+            rand_pause()
             return True
 
     # def __make_DataFrame(self):
