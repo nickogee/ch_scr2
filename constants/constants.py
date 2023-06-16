@@ -1,7 +1,7 @@
 from pathlib import Path
 
 
-DIR = Path(__file__).resolve().parent
+DIR = Path(__file__).resolve().parent.parent
 
 
 MERCANTS = {
@@ -43,13 +43,14 @@ DB_ROW_DATA_CREATE_STR = f'''
                         cost INTEGER DEFAULT 0, 
                         prev_cost INTEGER DEFAULT 0, 
                         description TEXT, 
-                        url TEXT PRIMARY KEY, 
+                        url TEXT, 
                         url_picture TEXT, 
                         category_full_path TEXT, 
                         brand TEXT, 
                         sub_category TEXT, 
                         time_scrap TEXT
-                        ) 
+                        )
+                        PRIMARY KEY (url, product_id) 
                     '''
 
 

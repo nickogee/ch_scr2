@@ -4,7 +4,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 import time
 import datetime
-from constants.constants import DIR
+from constants.constants import DIR, MERCANTS
 from scr.share_functions import rand_pause
 
 
@@ -82,7 +82,7 @@ class KaspiParser():
 
         self.driver.get(URL)
         # time.sleep(100)
-        rand_pause()
+        rand_pause(-10)
         Almaty = self.__find_element(By.CSS_SELECTOR, '[data-city-id="750000000"]')
         Almaty.click()
 
@@ -98,6 +98,7 @@ class KaspiParser():
                 el.click()
                 break
         
+        rand_pause(20)
         category_list = self.__find_elements(By.CLASS_NAME, 'tree__link')
 
         for category in category_list:
@@ -125,7 +126,8 @@ class KaspiParser():
                     next_page = True
                     while next_page:
                         #  Внутри категории ищем элементы с названием и ценой продуктов
-                        product_list = self.__find_elements(By.CLASS_NAME, 'item-card__info')
+                        # product_list = self.__find_elements(By.CLASS_NAME, 'item-card__info')
+                        product_list = self.__find_elements(By.CLASS_NAME, 'item-cards-grid__cards')
 
                         for product_card in product_list:
                             title_tag = product_card.find_element(By.CLASS_NAME, 'item-card__name')
@@ -139,7 +141,23 @@ class KaspiParser():
                                 'priceActual': float(''.join(priceL)),
                                 'pricePrevious': 0,
                             }
+                            
 
+                            l = {
+                                'mercant_id': MERCANTS['mgm'],
+                                'mercant_name': 'mgm',
+                                # 'product_id': product['id'],
+                                # 'title':  product['name'],
+                                # 'description': product['description'],
+                                # 'url': product['uri'],
+                                # 'url_picture': product['image'],
+                                # 'time_scrap': str(datetime.datetime.now().isoformat()),
+                                # 'sub_category': sub_category,
+                                # 'category_full_path': category_full_path,
+                                # 'brand': '',
+                                # 'cost': product['priceActual'],
+                                # 'prev_cost': product['pricePrevious'],
+                                }
                             self.rezult.append(l)
 
                         next_page = self.__push_the_button_next()

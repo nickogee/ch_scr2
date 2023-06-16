@@ -51,15 +51,15 @@ class ArbuzApiScraper():
                     l = {
                         'mercant_id': MERCANTS['abz'],
                         'mercant_name': 'abz',
-                        'product_id': product['id'],
+                        'product_id': str(product['id']),
                         'title':  product['name'],
                         'description': product['description'],
-                        'url': product['uri'],
+                        'url': f"https://arbuz.kz{product['uri']}",
                         'url_picture': product['image'],
                         'time_scrap': str(datetime.datetime.now().isoformat()),
                         'sub_category': sub_category,
                         'category_full_path': category_full_path,
-                        'brand': '',
+                        'brand': product['brandName'],
                         'cost': product['priceActual'],
                         'prev_cost': product['pricePrevious']
                     }
@@ -72,7 +72,7 @@ class ArbuzApiScraper():
             rand_pause()
 
     def __upload_to_db(self):
-        upload_to_db(self.rezult, DB_PATH, DB_ROW_DATA_TABLE, DB_ROW_DATA_CREATE_STR, 'url')
+        upload_to_db(self.rezult, DB_PATH, DB_ROW_DATA_TABLE, DB_ROW_DATA_CREATE_STR, 'product_id')
 
 
     def start(self):

@@ -28,13 +28,13 @@ class GlovoApiScraper():
 
             category_groups = response_data['body']
 
+            page_num = 1
             for sub_cat in category_groups:
                 sub_category_name = sub_cat['data']['title']
                 products = sub_cat['data']['elements']
 
-                page_num = 1
                 category_full_path = self.categorie_dict['title'] + '/' + category_name + '/' + sub_category_name
-                print(f'Glovo - запрос {page_num} из {len(self.categories)} по {category_full_path}')
+                print(f'Glovo - запрос {page_num} из {len(category_groups)} по {category_full_path}')
 
                 for product in products:
 
@@ -42,11 +42,11 @@ class GlovoApiScraper():
                     l = {
                         'mercant_id': MERCANTS['glv'],
                         'mercant_name': 'glv',
-                        'product_id': product['data']['id'],
+                        'product_id': str(product['data']['id']),
                         'title': product_name.replace("'", ''),
                         'description': '',
-                        # здесь отсутствует url товара (карточки товара), по этому составим его
-                        # из url категории (он существует) и id товара
+                        # здесь отсутствует url товара (карточки товара), по этому сюда поместим
+                        # url категории (он существует)
                         'url': category_url + '_' + str(product['data']['id']),
                         'url_picture': product['data']['imageUrl'],
                         'time_scrap': str(datetime.datetime.now().isoformat()),
@@ -65,7 +65,7 @@ class GlovoApiScraper():
             
 
     def __upload_to_db(self):
-        upload_to_db(self.rezult, DB_PATH, DB_ROW_DATA_TABLE, DB_ROW_DATA_CREATE_STR, 'url')
+        upload_to_db(self.rezult, DB_PATH, DB_ROW_DATA_TABLE, DB_ROW_DATA_CREATE_STR, 'product_id')
 
     def start(self):
         self.fill_rezult()

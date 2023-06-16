@@ -28,6 +28,6 @@ def get_fetch(url, params):
         return requests.get(url=url, headers=headers)
 
 
-def rand_pause():
-        time.sleep(15 + random.randint(-10, 15))
+def rand_pause(add_sec = 0):
+        time.sleep(15 + random.randint(-10, 15) + add_sec)
 
