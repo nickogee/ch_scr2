@@ -38,7 +38,7 @@ DB_ROW_DATA_CREATE_STR = f'''
                         CREATE TABLE {DB_ROW_DATA_TABLE}( 
                         mercant_id TEXT, 
                         mercant_name TEXT, 
-                        product_id TEXT, 
+                        product_id TEXT PRIMARY KEY, 
                         title TEXT, 
                         cost INTEGER DEFAULT 0, 
                         prev_cost INTEGER DEFAULT 0, 
@@ -50,7 +50,6 @@ DB_ROW_DATA_CREATE_STR = f'''
                         sub_category TEXT, 
                         time_scrap TEXT
                         )
-                        PRIMARY KEY (url, product_id) 
                     '''
 
 
