@@ -47,7 +47,7 @@ class GlovoApiScraper():
                         'description': '',
                         # здесь отсутствует url товара (карточки товара), по этому сюда поместим
                         # url категории (он существует)
-                        'url': category_url + '_' + str(product['data']['id']),
+                        'url': f'https://glovoapp.com/kz/ru/almaty/glovo-express-ala/?content={category_url}',
                         'url_picture': product['data']['imageUrl'],
                         'time_scrap': str(datetime.datetime.now().isoformat()),
                         'sub_category': sub_category_name,

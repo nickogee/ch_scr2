@@ -1,5 +1,5 @@
 from flask import Flask, send_from_directory
-from constants import UPLOAD_FOLDER
+from constants.constants import UPLOAD_FOLDER
 
 
  # папка для сохранения загруженных файлов
