@@ -1,6 +1,7 @@
 import sqlite3 
 from scr.glovo_fetchs import CATEGORIES_GLV
 from scr.arbuz_fetchs import CATEGORIES_ABZ
+# from scr.magnum_fetchs import CATEGORIES_M
 
 
 
@@ -139,7 +140,7 @@ def get_next_categoy_abz(db_path, table_name, table_create_str, pk_column):
 
     db_ses.update_data(result_dct_to_update)
     return result_dct
-    
+            
 
 def read_mercant_data(db_path, table_name, columns, filter_tpl):
     db_ses = DBSqlite(db_path, table_name, None, None)
