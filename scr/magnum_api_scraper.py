@@ -15,7 +15,6 @@ class MagnumScrapper():
         self.category_list = []
         self.category_update = []
         self.token = None
-        # self.token = 'Bearer eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI3OTk5Nzc3Nzc3NyIsImF1ZCI6ImNpdHJvLXNlcnZpY2VzIiwic2NvcGUiOlsiOCIsIjQiXSwiaXNzIjoiaHR0cHM6XC9cL2NpdHJvYnl0ZS5jb20iLCJleHAiOjE2ODc4NzQ2ODYsInVzZXJJZCI6NjU1MzI0LCJpYXQiOjE2ODc4Mzg2ODYsImp0aSI6ImE3NzViNzE1LWRiNmItNGFjMi04Mzk3LWMxYWJlMmU1NmY4ZCJ9.g8IS8pag3EG5lhEaOfMU0EWDkENsnEkL0uKHRaa_Ksw50GixeIQwFj0NWy2TiusiM8VVse0fODOvTnMmXLSqu4oAv-m5sHN01fsauC9mJ3GbzOuwQ8ncrDKSnMi1rMM71m32SdK83oga_4t_DoBAI_ZINym6u_ASVJcQMUkkX_10uOU40SI_bYJT7aBrn0ZXw_sQBXdBExyb1IrewELEsW598EIl0Uq81XggpeHksAi7Famw-HY2ldX3UdWbq5PgL971nbKwQkYcf96s4MSo0Uoo4bBisJrQyVgbiTAaQmFqG9HO-76XHuOhyQma8_4RUN2yqqKqL7FOcXnxuD-9Zg'
         self.get_token()
         
 
