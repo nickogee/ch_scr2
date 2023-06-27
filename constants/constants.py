@@ -71,3 +71,14 @@ DB_ABZ_CATEGORY_CREATE_STR = f'''
                         scrap_count INTEGER DEFAULT 0
                         ) 
                     '''
+
+DB_MGM_CATEGORY_TABLE = 'mgm_category'
+DB_MGM_CATEGORY_CREATE_STR = f'''
+                        CREATE TABLE {DB_MGM_CATEGORY_TABLE}( 
+                        parent_id TEXT, 
+                        id TEXT PRIMARY KEY,
+                        name TEXT,
+                        category_lvl TEXT,
+                        scrap_count INTEGER DEFAULT 0
+                        ) 
+                    '''

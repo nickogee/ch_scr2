@@ -9,6 +9,7 @@ venv.bak/
 __pycache__/
 lib/
 bin/
+**/.DS_Store
 
 /include
 

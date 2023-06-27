@@ -18,14 +18,15 @@ def disc_prercent(st_df):
 
 
 def get_fetch(url, params):
-    headers = params['headers']
-    body = params['body']
-    method = params['method']
+    headers = params.get('headers')
+    method = params.get('method')
+    body = params.get('body')
+    resp_params = params.get('params')
 
-    if method == 'POST':
+    if method == 'POST':      
         return requests.post(url=url, headers=headers, data=body)
     elif method == 'GET':
-        return requests.get(url=url, headers=headers)
+        return requests.get(url=url, headers=headers, params=resp_params)
 
 
 def rand_pause(add_sec = 0):

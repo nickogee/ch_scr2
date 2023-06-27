@@ -2,6 +2,10 @@ from selenium import webdriver
 import time
 import scr.arbuz_api_scraper as abz
 import scr.glovo_api_scraper as glv
+from scr.database_worker import update_parent_category_mgm
+from constants.constants import DB_PATH, DB_MGM_CATEGORY_TABLE, DB_MGM_CATEGORY_CREATE_STR, MERCANTS, \
+                                DB_ROW_DATA_CREATE_STR, DB_ROW_DATA_TABLE
+
 
 
 def run_webdriver():
@@ -44,20 +48,11 @@ def run_webdriver():
 
 def run_test_case():
 
-    try:
-        abz.main()
-    except Exception as ex:
-        print(ex)
-    
-    try:
-        glv.main()
-    except Exception as ex:
-        print(ex)
-    
+    filter_tpl = ('parent_id', '1107')
+    update_parent_category_mgm(DB_PATH, DB_MGM_CATEGORY_TABLE, pk_column='id', filter_tpl=filter_tpl) 
     
 
     
-
 if __name__ == '__main__':
     run_test_case()
 

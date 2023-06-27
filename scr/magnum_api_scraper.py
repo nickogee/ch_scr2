@@ -1,0 +1,203 @@
+from scr.magnum_fetchs import PARAMS_TOKEN, URL_TOKEN, URL_CATEGORY, PARAMS_CATEGORY, \
+                                REQ_LIMIT, URL_CATALOG, PARAMS_CATALOG
+import datetime
+from scr.share_functions import get_fetch, rand_pause
+from scr.database_worker import upload_to_db, table_exists, get_next_categoy_list_mgm, \
+                                update_category_mgm, update_parent_category_mgm
+from constants.constants import DB_PATH, DB_MGM_CATEGORY_TABLE, DB_MGM_CATEGORY_CREATE_STR, MERCANTS, \
+                                DB_ROW_DATA_CREATE_STR, DB_ROW_DATA_TABLE
+
+
+class MagnumScrapper():
+    def __init__(self) -> None:
+        self.date_time_now = datetime.datetime.now()
+        self.rezult = []
+        self.category_list = []
+        self.category_update = []
+        self.token = None
+        # self.token = 'Bearer eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI3OTk5Nzc3Nzc3NyIsImF1ZCI6ImNpdHJvLXNlcnZpY2VzIiwic2NvcGUiOlsiOCIsIjQiXSwiaXNzIjoiaHR0cHM6XC9cL2NpdHJvYnl0ZS5jb20iLCJleHAiOjE2ODc4NzQ2ODYsInVzZXJJZCI6NjU1MzI0LCJpYXQiOjE2ODc4Mzg2ODYsImp0aSI6ImE3NzViNzE1LWRiNmItNGFjMi04Mzk3LWMxYWJlMmU1NmY4ZCJ9.g8IS8pag3EG5lhEaOfMU0EWDkENsnEkL0uKHRaa_Ksw50GixeIQwFj0NWy2TiusiM8VVse0fODOvTnMmXLSqu4oAv-m5sHN01fsauC9mJ3GbzOuwQ8ncrDKSnMi1rMM71m32SdK83oga_4t_DoBAI_ZINym6u_ASVJcQMUkkX_10uOU40SI_bYJT7aBrn0ZXw_sQBXdBExyb1IrewELEsW598EIl0Uq81XggpeHksAi7Famw-HY2ldX3UdWbq5PgL971nbKwQkYcf96s4MSo0Uoo4bBisJrQyVgbiTAaQmFqG9HO-76XHuOhyQma8_4RUN2yqqKqL7FOcXnxuD-9Zg'
+        self.get_token()
+        
+
+    
+    def get_token(self):
+        if not self.token:
+            resp = get_fetch(url=URL_TOKEN, params=PARAMS_TOKEN)
+            resp_js = resp.json()
+            
+            if resp_js['token']:
+                self.token = resp_js['token']
+    
+
+    def fill_category_table(self):
+        '''Создает и перезаполняет актуальными данными таблицу категорий, если она не существует'''
+
+        if not table_exists(db_path=DB_PATH, table_name=DB_MGM_CATEGORY_TABLE):
+
+            # для самого верхнего уровня категорий PARENT_ID пустой
+            params_head = PARAMS_CATEGORY.copy()
+            params_head['params']['parentId'] = ''
+            params_head['headers']['Authorization'] = self.token
+            
+            resp = get_fetch(url=URL_CATEGORY, params=params_head)
+            resp_js = resp.json()
+            
+            for head_dct in resp_js:
+                # категория с  id = 60 - это категория "скидки", id = 70 - это "Курбан-Айт"
+                if head_dct['id'] == 60 or head_dct['id'] == 70:
+                    continue
+                
+                # добавляем категорию первого уровня
+                dct = {
+                    'parent_id': '',
+                    'id': str(head_dct['id']),
+                    'name': str(head_dct['name']),
+                    'category_lvl': '1',
+                }
+
+                print(f"Получаем категорию id={head_dct['id']}, name={head_dct['name']}")
+                self.category_list.append(dct)
+
+                chld_ls = head_dct.get('childCategories')
+                if chld_ls:
+                    for chld_dct in chld_ls:
+                        
+                        # добавляем категорию второго уровня
+                        dct = {
+                        'parent_id': str(chld_dct['parentId']),
+                        'id': str(chld_dct['id']),
+                        'name': str(chld_dct['name']),
+                        'category_lvl': '2',
+                                }
+                        
+                        print(f"Получаем категорию id={chld_dct['id']}, name={chld_dct['name']}")
+                        self.category_list.append(dct)
+
+                        rand_pause()
+
+                        # для каждой категории второго уровня делаем запрос, чтобы получить дочерние категории (3-го уровня)
+                        params_chld = PARAMS_CATEGORY.copy()
+                        params_chld['params']['parentId'] = str(chld_dct['parentId'])
+                        params_chld['headers']['Authorization'] = self.token
+                        
+                        chld_resp = get_fetch(url=URL_CATEGORY, params=params_chld)
+                        chld_resp_js = chld_resp.json()
+
+                        for i in chld_resp_js:
+                            # здесь нужны только дочерние элементы
+                            sub_chld_ls = i.get('childCategories')
+                            if sub_chld_ls:
+                                for sub_chld_dct in sub_chld_ls:
+                                    
+                                    # добавляем категорию третьего уровня
+                                    dct = {
+                                    'parent_id': str(sub_chld_dct['parentId']),
+                                    'id': str(sub_chld_dct['id']),
+                                    'name': str(sub_chld_dct['name']),
+                                    'category_lvl': '3',
+                                            }
+
+                                    print(f"Получаем категорию id={sub_chld_dct['id']}, name={sub_chld_dct['name']}")
+                                    self.category_list.append(dct)
+
+            if self.category_list:
+                upload_to_db(rezult=self.category_list, 
+                            db_path=DB_PATH, 
+                            table_name=DB_MGM_CATEGORY_TABLE,
+                            table_create_str=DB_MGM_CATEGORY_CREATE_STR,
+                            pk_column='id')
+
+
+    def fill_category_data(self):
+        '''Парсит данные по нужным категориям'''
+
+        self.category_list = get_next_categoy_list_mgm(db_path=DB_PATH, 
+                            table_name=DB_MGM_CATEGORY_TABLE)
+        
+        # будет содержать текущее количество выполненных запросов, чтобы не привысить лимит запростов
+        req_cnt = 0
+        for cat_tpl in self.category_list:
+
+            if req_cnt > REQ_LIMIT:
+                break
+
+            # максимальное количество страниц одной категории 3-го уровня - 20
+            for page in range(21):
+                params = PARAMS_CATALOG.copy()
+                params['params']['categoryIds'] = cat_tpl[0]
+                params['params']['pageId'] = str(page)
+                params['headers']['Authorization'] = self.token
+                
+                resp = get_fetch(url=URL_CATALOG, params=params)
+                resp_js = resp.json()
+                req_cnt += 1
+
+                content = resp_js.get('content')
+                if content:
+
+                    for prod_dct in content:                      
+                        
+                        discount_dct = prod_dct.get('discount')
+                        if discount_dct:
+                            prev_price = int(discount_dct.get('prevPrice')/100)
+                        else:
+                            prev_price = 0
+
+                        l = {
+                        'mercant_id': MERCANTS['mgm'],
+                        'mercant_name': 'mgm',
+                        'product_id': str(prod_dct.get('itemId')),
+                        'title': prod_dct.get('name'),
+                        'description': prod_dct.get('descr'),
+                        # здесь отсутствует url товара (карточки товара)
+                        'url': '',
+                        'url_picture': prod_dct.get('mainImg'),
+                        'time_scrap': str(datetime.datetime.now().isoformat()),
+                        'sub_category': cat_tpl[1],
+                        'category_full_path': f'{cat_tpl[3]}/{cat_tpl[2]}/{cat_tpl[1]}',
+                        'brand': '',
+                        'cost': str(int(prod_dct.get('price')/100)),
+                        'prev_cost': str(prev_price)
+                            }
+
+                        self.rezult.append(l) 
+                else:
+                    # Кочились страницы категории. Добавим категорию в список для обновления scrap_count
+                    d = {
+                        'id': cat_tpl[0],
+                        'scrap_count': cat_tpl[4] + 1 
+                    }
+                    self.category_update.append(d)
+
+                    break
+                
+                print(f'Magnum - страница {page + 1} категории "{cat_tpl[3]}/{cat_tpl[2]}/{cat_tpl[1]}" запрос {req_cnt}')
+                rand_pause(-5)
+
+    def __upload_to_db(self):
+        
+        # грузим "спарсенные" данные в базу
+        upload_to_db(self.rezult, DB_PATH, DB_ROW_DATA_TABLE, DB_ROW_DATA_CREATE_STR, 'product_id')
+        
+        # обновляем scrap_count для "спарсеных" категорий 3-го уровня
+        update_category_mgm(self.category_update, DB_PATH, DB_MGM_CATEGORY_TABLE, 'id')
+
+        # после того как обновили scrap_count для "спарсеных" категорий 3-го уровня,
+        # обновим scrap_count для родительской категории (2-го уровня) - возьмем наименьшее scrap_count среди дочерних категорий
+        filter_tpl = ('parent_id', self.category_list[6])
+        update_parent_category_mgm(db_path=DB_PATH, table_name=DB_MGM_CATEGORY_TABLE, pk_column='id', filter_tpl=filter_tpl)
+
+
+    def start(self):
+        self.fill_category_table()
+        self.fill_category_data()
+        self.__upload_to_db()
+
+
+def main():
+    magnum = MagnumScrapper()
+    magnum.start()
+
+
+if __name__ == '__main__':
+    main()
