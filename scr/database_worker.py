@@ -214,7 +214,7 @@ def read_mercant_data(db_path, table_name, columns, filter_tpl):
 
 def table_exists(db_path, table_name):
     db_ses = DBSqlite(db_path=db_path, table_name=table_name, table_create_str=None, pk_column=None)
-    return db_ses.table_exists
+    return db_ses.table_exists()
 
 
 
