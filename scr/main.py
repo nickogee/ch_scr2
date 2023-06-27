@@ -1,6 +1,6 @@
 import scr.arbuz_api_scraper as abz
 import scr.glovo_api_scraper as glv
-# import scr.kaspi as ksp
+import scr.magnum_api_scraper as mgm
 
 if __name__ == '__main__':
     try:
@@ -10,6 +10,11 @@ if __name__ == '__main__':
     
     try:
         glv.main()
+    except Exception as ex:
+        print(ex)
+
+    try:
+        mgm.main()
     except Exception as ex:
         print(ex)
         

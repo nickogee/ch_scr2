@@ -20,10 +20,7 @@ PARAMS_TOKEN =  {
 
 ############################### Основной запрос к каталогу
 URL_CATALOG = 'https://mgo-gw1.e-magnum.kz/catalog/client/platformItemV2'
-
-TOKEN = '@TOKEN@'
-CATEGORY_ID = '@CATID@'
-PAGE_ID = '@PAGEID@'
+REQ_LIMIT = 20  # лимит запросов на каждый запуск скрипта
 
 PARAMS_CATALOG = {
     "headers": {
@@ -31,18 +28,18 @@ PARAMS_CATALOG = {
         'x-client-version': '4.1.6 (100402) [iOS-16.5]',
         'accept': 'application/json',
         'accept-encoding': 'gzip',
-        'authorization': f'{TOKEN}',
+        'Authorization': '',
         'host': 'mgo-gw1.e-magnum.kz',
         'content-type': 'application/json'
      },
 
     "params": {
         'platformId': '5002',
-        'categoryIds': f'{CATEGORY_ID}',
+        'categoryIds': '',
         'categoryIds': 'sales',
         'sortOrder': 'DESC',
-        'pageId': f'{PAGE_ID}',
-        'pageSize': '20',        # почему-то константная величина, не отражает реального количества страниц
+        'pageId': '',
+        'pageSize': '20',  # почему-то константная величина, не отражает реального количества страниц
         'filterIds': ''
     },
 
@@ -52,8 +49,6 @@ PARAMS_CATALOG = {
 
 ############################### Запрос к иерархии категорий
 URL_CATEGORY = 'https://mgo-gw1.e-magnum.kz/catalog/client/catalog'
-
-PARENT_ID = '@PARENT_ID@'
 
 PARAMS_CATEGORY = {
     "headers": {
