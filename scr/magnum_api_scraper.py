@@ -183,7 +183,7 @@ class MagnumScrapper():
 
         # после того как обновили scrap_count для "спарсеных" категорий 3-го уровня,
         # обновим scrap_count для родительской категории (2-го уровня) - возьмем наименьшее scrap_count среди дочерних категорий
-        filter_tpl = ('parent_id', self.category_list[6])
+        filter_tpl = ('parent_id', self.category_list[0][6])
         update_parent_category_mgm(db_path=DB_PATH, table_name=DB_MGM_CATEGORY_TABLE, pk_column='id', filter_tpl=filter_tpl)
 
 
