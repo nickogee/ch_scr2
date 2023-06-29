@@ -16,20 +16,32 @@ class DBSqlite():
         self.pk_column = pk_column
 
     def table_exists(self): 
-        self.cursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE TYPE = 'table' AND name = '{self.table_name}' ''') 
-        if self.cursor.fetchone()[0] == 1: 
-            return True 
-        return False
+
+        try:
+            self.cursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE TYPE = 'table' AND name = '{self.table_name}' ''') 
+            return (self.cursor.fetchone()[0] == 1)
+        except Exception as ex:
+            print(ex)
+            return True
+        
+    
     
     def crate_table(self):
 
-        if not self.table_exists(): 
-            self.cursor.execute(self.table_create_str)
+        if not self.table_exists():
+            try: 
+                self.cursor.execute(self.table_create_str)
+            except Exception as ex:
+                print(ex)
     
 
     def data_exists(self, product_dict:dict):
-        self.cursor.execute(f'''SELECT {self.pk_column} FROM {self.table_name} WHERE {self.pk_column} = {"'" + product_dict[self.pk_column] + "'"}''')
-        return bool(self.cursor.fetchall())
+        try:
+            self.cursor.execute(f'''SELECT {self.pk_column} FROM {self.table_name} WHERE {self.pk_column} = {"'" + product_dict[self.pk_column] + "'"}''')
+            return bool(self.cursor.fetchall())
+        except Exception as ex:
+            print(ex)
+            return False
 
     def insert_data(self, product_dict:dict):
 
@@ -38,9 +50,12 @@ class DBSqlite():
         param_ls = ['?' for key in product_dict.keys()]
         param_str = ', '.join(param_ls)
 
-        self.cursor.execute(f'''INSERT INTO {self.table_name} ({keys_str}) VALUES({param_str}) ''',
-                             tuple(product_dict.values())) 
-        self.connect.commit()
+        try:
+            self.cursor.execute(f'''INSERT INTO {self.table_name} ({keys_str}) VALUES({param_str}) ''',
+                                tuple(product_dict.values())) 
+            self.connect.commit()
+        except Exception as ex:
+            print(ex)
 
     def update_data(self, product_dict:dict):
 
@@ -55,8 +70,11 @@ class DBSqlite():
             items_ls.append(st)
 
         items_str = ', '.join(items_ls)
-        self.cursor.execute(f'''UPDATE {self.table_name} SET {items_str} WHERE  {self.pk_column} = {"'" + product_dict[self.pk_column] + "'"}''')
-        self.connect.commit()
+        try:
+            self.cursor.execute(f'''UPDATE {self.table_name} SET {items_str} WHERE  {self.pk_column} = {"'" + product_dict[self.pk_column] + "'"}''')
+            self.connect.commit()
+        except Exception as ex:
+            print(ex)
      
 
     def insert_update_data(self, rezult:list):
@@ -69,23 +87,31 @@ class DBSqlite():
     
 
     def get_next_category_glv(self, order_by:str):
-        result = self.cursor.execute(f'''SELECT * FROM {self.table_name} ORDER BY {order_by} LIMIT 1''').fetchone()
-        result_dct = {
-                'title': result[0],
-                'slug': result[1],
-                'scrap_count': result[2],
-                  }
-        return result_dct
+        try:
+            result = self.cursor.execute(f'''SELECT * FROM {self.table_name} ORDER BY {order_by} LIMIT 1''').fetchone()
+            result_dct = {
+                    'title': result[0],
+                    'slug': result[1],
+                    'scrap_count': result[2],
+                    }
+            return result_dct
+        except Exception as ex:
+            print(ex)
+            return None
     
     def get_next_category_abz(self, order_by:str):
-        result = self.cursor.execute(f'''SELECT * FROM {self.table_name} ORDER BY {order_by} LIMIT 1''').fetchone()
-        result_dct = {
-                'title': result[0],
-                'href': result[1],
-                'catalog': result[2],
-                'scrap_count': result[3],
-                  }
-        return result_dct
+        try:
+            result = self.cursor.execute(f'''SELECT * FROM {self.table_name} ORDER BY {order_by} LIMIT 1''').fetchone()
+            result_dct = {
+                    'title': result[0],
+                    'href': result[1],
+                    'catalog': result[2],
+                    'scrap_count': result[3],
+                    }
+            return result_dct
+        except Exception as ex:
+            print(ex)
+            return None
 
     def get_next_category_list_mgm(self):
 
@@ -117,14 +143,22 @@ class DBSqlite():
                     )
                 ORDER BY mgm.scrap_count   
                 '''
-          
-        result = self.cursor.execute(sql_txt).fetchall()
-        return result
+
+        try:  
+            result = self.cursor.execute(sql_txt).fetchall()
+            return result
+        except Exception as ex:
+            print(ex)
+            return None
     
 
     def get_data(self, columns: str, filter_tpl: tuple):
-        result = self.cursor.execute(f'''SELECT {columns} FROM {self.table_name} WHERE {filter_tpl[0]} = {"'" + filter_tpl[1] + "'"}''')
-        return result
+        try:
+            result = self.cursor.execute(f'''SELECT {columns} FROM {self.table_name} WHERE {filter_tpl[0]} = {"'" + filter_tpl[1] + "'"}''')
+            return result
+        except Exception as ex:
+            print(ex)
+            return None
 
     def __del__(self):
         try:
