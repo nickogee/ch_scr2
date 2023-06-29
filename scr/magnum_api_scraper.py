@@ -142,12 +142,23 @@ class MagnumScrapper():
                         else:
                             prev_price = 0
 
+                        title = prod_dct.get('name')
+                        title = title.replace('«', '')
+                        title = title.replace('»', '')
+                        title = title.replace('"', '')
+                        
+                        description = prod_dct.get('descr')
+                        description = description.replace('«', '')
+                        description = description.replace('»', '')
+                        description = description.replace('"', '')
+
+
                         l = {
                         'mercant_id': MERCANTS['mgm'],
                         'mercant_name': 'mgm',
                         'product_id': str(prod_dct.get('itemId')),
-                        'title': prod_dct.get('name'),
-                        'description': prod_dct.get('descr'),
+                        'title': title,
+                        'description': description,
                         # здесь отсутствует url товара (карточки товара)
                         'url': '',
                         'url_picture': prod_dct.get('mainImg'),
