@@ -20,7 +20,7 @@ PARAMS_TOKEN =  {
 
 ############################### Основной запрос к каталогу
 URL_CATALOG = 'https://mgo-gw1.e-magnum.kz/catalog/client/platformItemV2'
-REQ_LIMIT = 20  # лимит запросов на каждый запуск скрипта
+REQ_LIMIT = 6  # лимит запросов на каждый запуск скрипта
 
 PARAMS_CATALOG = {
     "headers": {
