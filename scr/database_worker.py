@@ -113,35 +113,37 @@ class DBSqlite():
             print(ex)
             return None
 
-    def get_next_category_list_mgm(self):
+    def get_next_category_list_mgm_air(self, mercant:str, last_lvl:str):
 
-        # Получим список из id категорий 3-го уровня, 
-        # у которых parent_id имеет имнимальное значение scrap_count из всех категорий 2-го уровня.
+        # Получим список из id категорий last_lvl + 1 уровня, 
+        # у которых parent_id имеет имнимальное значение scrap_count из всех категорий last_lvl уровня.
         # Отсортируем их по возростанию scrap_count, чтобы первыми соберать самые "давние" подкатегории 
-        sql_txt = '''
+        sql_txt = f'''
                 SELECT
-                    mgm.id as id,
-                    mgm.name as name,
-                    mgm_2.name as parent_name,
-                    mgm_3.name as head_parent_name,
-                    mgm.scrap_count as scrap_count,
-                    mgm_2.scrap_count as scrap_count_parent,
-                    mgm.parent_id as parent_id
+                    lvl.id as id,
+                    lvl.name as name,
+                    lvl_2.name as parent_name,
+                    lvl_3.name as head_parent_name,
+                    lvl.scrap_count as scrap_count,
+                    lvl_2.scrap_count as scrap_count_parent,
+                    lvl_2.id as parent1_id,
+                    lvl_3.id as parent2_id,
+                    lvl_3.parent_id as parent3_id
                 FROM 
-                    mgm_category as mgm
-                INNER JOIN mgm_category as mgm_2 
-                ON mgm.parent_id = mgm_2.id
-                INNER JOIN mgm_category as mgm_3 
-                ON mgm_2.parent_id = mgm_3.id
-                WHERE mgm.parent_id IN 
+                    {mercant}_category as lvl
+                INNER JOIN {mercant}_category as lvl_2 
+                ON lvl.parent_id = lvl_2.id
+                INNER JOIN {mercant}_category as lvl_3 
+                ON lvl_2.parent_id = lvl_3.id
+                WHERE lvl.parent_id IN 
                     (SELECT 
                         mc.id
-                    FROM mgm_category mc
-                    WHERE mc.category_lvl = '2'
+                    FROM {mercant}_category mc
+                    WHERE mc.category_lvl = '{last_lvl}'
                     ORDER BY mc.scrap_count 
                     LIMIT 1
                     )
-                ORDER BY mgm.scrap_count   
+                ORDER BY lvl.scrap_count   
                 '''
 
         try:  
@@ -178,6 +180,7 @@ def upload_to_db(rezult, db_path, table_name, table_create_str, pk_column):
     db_ses.insert_update_data(rezult)
 
 
+# --------------------- Glovo --------------------
 def get_next_categoy_glv(db_path, table_name, table_create_str, pk_column):
     
     db_ses = DBSqlite(db_path, table_name, table_create_str, pk_column)
@@ -195,6 +198,7 @@ def get_next_categoy_glv(db_path, table_name, table_create_str, pk_column):
     return result_dct
 
 
+# --------------------- Arbuz --------------------
 def get_next_categoy_abz(db_path, table_name, table_create_str, pk_column):
     
     db_ses = DBSqlite(db_path, table_name, table_create_str, pk_column)
@@ -212,11 +216,12 @@ def get_next_categoy_abz(db_path, table_name, table_create_str, pk_column):
     return result_dct
             
 
+# --------------------- Magnum --------------------
 def get_next_categoy_list_mgm(db_path, table_name):
     '''получает список категорий 3-го уровня, по которым нужно соберать данные'''
 
     db_ses = DBSqlite(db_path, table_name, '', '') 
-    result_ls = db_ses.get_next_category_list_mgm()
+    result_ls = db_ses.get_next_category_list_mgm_air('mgm', '2')
     return result_ls
 
 def update_category_mgm(update_ls, db_path, table_name, pk_column):
@@ -238,7 +243,35 @@ def update_parent_category_mgm(db_path, table_name, pk_column, filter_tpl):
     
     db_ses.update_data(cat_dct)
 
+
+# --------------------- Airba --------------------
+def get_next_categoy_list_air(db_path, table_name):
+    '''получает список категорий 4-го уровня, по которым нужно соберать данные'''
+
+    db_ses = DBSqlite(db_path, table_name, '', '') 
+    result_ls = db_ses.get_next_category_list_mgm_air('air', '3')
+    return result_ls
+
+def update_category_air(update_ls, db_path, table_name, pk_column):
+    db_ses = DBSqlite(db_path, table_name, '', pk_column)
+    for cat_dct in update_ls:
+        db_ses.update_data(cat_dct)
+
+def update_parent_category_air(db_path, table_name, pk_column, filter_tpl): 
+    columns = 'scrap_count'
+    db_ses = DBSqlite(db_path, table_name, None, pk_column)
+    result_ls = db_ses.get_data(columns=columns, filter_tpl=filter_tpl).fetchall()
+    sc_ls = [i[0] for i in result_ls]
+    sc_min = min(sc_ls)
+
+    cat_dct =   {
+            'id': filter_tpl[1],
+            'scrap_count': sc_min 
+                }
     
+    db_ses.update_data(cat_dct)
+
+
 
 def read_mercant_data(db_path, table_name, columns, filter_tpl):
     db_ses = DBSqlite(db_path, table_name, None, None)
