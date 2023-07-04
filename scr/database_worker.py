@@ -216,20 +216,20 @@ def get_next_categoy_abz(db_path, table_name, table_create_str, pk_column):
     return result_dct
             
 
-# --------------------- Magnum --------------------
-def get_next_categoy_list_mgm(db_path, table_name):
+# --------------------- Magnum + Airba --------------------
+def get_next_categoy_list_mgm_air(db_path, table_name, mercant:str, cat_lvl:str):
     '''получает список категорий 3-го уровня, по которым нужно соберать данные'''
 
     db_ses = DBSqlite(db_path, table_name, '', '') 
-    result_ls = db_ses.get_next_category_list_mgm_air('mgm', '2')
+    result_ls = db_ses.get_next_category_list_mgm_air(mercant, cat_lvl)
     return result_ls
 
-def update_category_mgm(update_ls, db_path, table_name, pk_column):
+def update_category_mgm_air(update_ls, db_path, table_name, pk_column):
     db_ses = DBSqlite(db_path, table_name, '', pk_column)
     for cat_dct in update_ls:
         db_ses.update_data(cat_dct)
 
-def update_parent_category_mgm(db_path, table_name, pk_column, filter_tpl): 
+def update_parent_category_mgm_air(db_path, table_name, pk_column, filter_tpl): 
     columns = 'scrap_count'
     db_ses = DBSqlite(db_path, table_name, None, pk_column)
     result_ls = db_ses.get_data(columns=columns, filter_tpl=filter_tpl).fetchall()
@@ -245,33 +245,34 @@ def update_parent_category_mgm(db_path, table_name, pk_column, filter_tpl):
 
 
 # --------------------- Airba --------------------
-def get_next_categoy_list_air(db_path, table_name):
-    '''получает список категорий 4-го уровня, по которым нужно соберать данные'''
+# def get_next_categoy_list_air(db_path, table_name):
+#     '''получает список категорий 4-го уровня, по которым нужно соберать данные'''
 
-    db_ses = DBSqlite(db_path, table_name, '', '') 
-    result_ls = db_ses.get_next_category_list_mgm_air('air', '3')
-    return result_ls
+#     db_ses = DBSqlite(db_path, table_name, '', '') 
+#     result_ls = db_ses.get_next_category_list_mgm_air('air', '3')
+#     return result_ls
 
-def update_category_air(update_ls, db_path, table_name, pk_column):
-    db_ses = DBSqlite(db_path, table_name, '', pk_column)
-    for cat_dct in update_ls:
-        db_ses.update_data(cat_dct)
+# def update_category_air(update_ls, db_path, table_name, pk_column):
+#     db_ses = DBSqlite(db_path, table_name, '', pk_column)
+#     for cat_dct in update_ls:
+#         db_ses.update_data(cat_dct)
 
-def update_parent_category_air(db_path, table_name, pk_column, filter_tpl): 
-    columns = 'scrap_count'
-    db_ses = DBSqlite(db_path, table_name, None, pk_column)
-    result_ls = db_ses.get_data(columns=columns, filter_tpl=filter_tpl).fetchall()
-    sc_ls = [i[0] for i in result_ls]
-    sc_min = min(sc_ls)
+# def update_parent_category_air(db_path, table_name, pk_column, filter_tpl): 
+#     columns = 'scrap_count'
+#     db_ses = DBSqlite(db_path, table_name, None, pk_column)
+#     result_ls = db_ses.get_data(columns=columns, filter_tpl=filter_tpl).fetchall()
+#     sc_ls = [i[0] for i in result_ls]
+#     sc_min = min(sc_ls)
 
-    cat_dct =   {
-            'id': filter_tpl[1],
-            'scrap_count': sc_min 
-                }
+#     cat_dct =   {
+#             'id': filter_tpl[1],
+#             'scrap_count': sc_min 
+#                 }
     
-    db_ses.update_data(cat_dct)
+#     db_ses.update_data(cat_dct)
 
 
+# --------------------- XML --------------------
 
 def read_mercant_data(db_path, table_name, columns, filter_tpl):
     db_ses = DBSqlite(db_path, table_name, None, None)

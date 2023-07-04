@@ -2,8 +2,8 @@ from scr.airba_fetch import PAGE, CATALOG, WORKFLOW, URL_CATEGORY, PARAMS_CATEGO
                                 REQ_LIMIT, URL_CATALOG, PARAMS_CATALOG
 import datetime
 from scr.share_functions import get_fetch, rand_pause
-from scr.database_worker import upload_to_db, table_exists, get_next_categoy_list_air, \
-                                update_category_air, update_parent_category_air
+from scr.database_worker import upload_to_db, table_exists, get_next_categoy_list_mgm_air, \
+                                update_category_mgm_air, update_parent_category_mgm_air
 from constants.constants import DB_PATH, DB_AIR_CATEGORY_TABLE, DB_AIR_CATEGORY_CREATE_STR, MERCANTS, \
                                 DB_ROW_DATA_CREATE_STR, DB_ROW_DATA_TABLE
 
@@ -112,8 +112,8 @@ class AirbaScrapper():
     def fill_category_data(self):
         '''Парсит данные по нужным категориям'''
         
-        self.category_list = get_next_categoy_list_air(db_path=DB_PATH, 
-                            table_name=DB_AIR_CATEGORY_TABLE)
+        self.category_list = get_next_categoy_list_mgm_air(db_path=DB_PATH, 
+                            table_name=DB_AIR_CATEGORY_TABLE, mercant='air', cat_lvl='3')
         
         # будет содержать текущее количество выполненных запросов, чтобы не привысить лимит запростов
         req_cnt = 0
@@ -223,8 +223,8 @@ class AirbaScrapper():
                 else:
                     is_last_page = True
 
-                print(f'Fresh Airba - страница {page - 1} категории "{cat_tpl[3]}/{cat_tpl[2]}/{cat_tpl[1]}" запрос {req_cnt -1}')
-                rand_pause(-5)
+                print(f'Fresh Airba - страница {page} категории "{cat_tpl[3]}/{cat_tpl[2]}/{cat_tpl[1]}" запрос {req_cnt}')
+                rand_pause()
 
             else:
                  # Кочились страницы категории. Добавим категорию в список для обновления scrap_count
@@ -240,22 +240,22 @@ class AirbaScrapper():
         upload_to_db(self.rezult, DB_PATH, DB_ROW_DATA_TABLE, DB_ROW_DATA_CREATE_STR, 'product_id')
         
         # обновляем scrap_count для "спарсеных" категорий 4-го уровня
-        update_category_air(self.category_update, DB_PATH, DB_AIR_CATEGORY_TABLE, 'id')
+        update_category_mgm_air(self.category_update, DB_PATH, DB_AIR_CATEGORY_TABLE, 'id')
 
         # после того как обновили scrap_count для "спарсеных" категорий 4-го уровня,
         # обновим scrap_count для родительской категории (3-го уровня) - возьмем наименьшее scrap_count среди дочерних категорий
         filter_tpl = ('parent_id', self.category_list[0][6])
-        update_parent_category_air(db_path=DB_PATH, table_name=DB_AIR_CATEGORY_TABLE, pk_column='id', filter_tpl=filter_tpl)
+        update_parent_category_mgm_air(db_path=DB_PATH, table_name=DB_AIR_CATEGORY_TABLE, pk_column='id', filter_tpl=filter_tpl)
 
         # после того как обновили scrap_count для категорий 3-го уровня,
         # обновим scrap_count для родительской категории (2-го уровня) - возьмем наименьшее scrap_count среди дочерних категорий
         filter_tpl = ('parent_id', self.category_list[0][7])
-        update_parent_category_air(db_path=DB_PATH, table_name=DB_AIR_CATEGORY_TABLE, pk_column='id', filter_tpl=filter_tpl)
+        update_parent_category_mgm_air(db_path=DB_PATH, table_name=DB_AIR_CATEGORY_TABLE, pk_column='id', filter_tpl=filter_tpl)
 
         # после того как обновили scrap_count для категорий 2-го уровня,
         # обновим scrap_count для родительской категории (1-го уровня) - возьмем наименьшее scrap_count среди дочерних категорий
         filter_tpl = ('parent_id', self.category_list[0][8])
-        update_parent_category_air(db_path=DB_PATH, table_name=DB_AIR_CATEGORY_TABLE, pk_column='id', filter_tpl=filter_tpl)
+        update_parent_category_mgm_air(db_path=DB_PATH, table_name=DB_AIR_CATEGORY_TABLE, pk_column='id', filter_tpl=filter_tpl)
 
         
 

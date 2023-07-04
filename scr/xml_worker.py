@@ -73,9 +73,7 @@ def create_xml_str(result: list):
 
 def make_data_file():
 
-
     columns_str = ', '.join(DB_ROW_DATA_COLUMNS_LS)
-
     for key in MERCANTS.keys():
         filter_tpl = ('mercant_id', MERCANTS[key])
         db_result = read_mercant_data(db_path=DB_PATH, table_name=DB_ROW_DATA_TABLE, columns=columns_str, filter_tpl=filter_tpl)
