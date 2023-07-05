@@ -189,6 +189,7 @@ class MagnumScrapper():
     def __upload_to_db(self):
         
         # грузим "спарсенные" данные в базу
+        print(f'Magnum - получено {len(self.rezult)} sku')
         upload_to_db(self.rezult, DB_PATH, DB_ROW_DATA_TABLE, DB_ROW_DATA_CREATE_STR, 'product_id')
         
         # обновляем scrap_count для "спарсеных" категорий 3-го уровня

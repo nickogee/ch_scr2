@@ -65,6 +65,7 @@ class GlovoApiScraper():
             
 
     def __upload_to_db(self):
+        print(f'Glovo - получено {len(self.rezult)} sku')
         upload_to_db(self.rezult, DB_PATH, DB_ROW_DATA_TABLE, DB_ROW_DATA_CREATE_STR, 'product_id')
 
     def start(self):

@@ -223,7 +223,7 @@ class AirbaScrapper():
                 else:
                     is_last_page = True
 
-                print(f'Fresh Airba - страница {page} категории "{cat_tpl[3]}/{cat_tpl[2]}/{cat_tpl[1]}" запрос {req_cnt}')
+                print(f'Fresh Airba - страница {page - 1} категории "{cat_tpl[3]}/{cat_tpl[2]}/{cat_tpl[1]}" запрос {req_cnt}')
                 rand_pause()
 
             else:
@@ -237,6 +237,7 @@ class AirbaScrapper():
     def __upload_to_db(self):
         
         # грузим "спарсенные" данные в базу
+        print(f'Fresh Airba - получено {len(self.rezult)} sku')
         upload_to_db(self.rezult, DB_PATH, DB_ROW_DATA_TABLE, DB_ROW_DATA_CREATE_STR, 'product_id')
         
         # обновляем scrap_count для "спарсеных" категорий 4-го уровня
