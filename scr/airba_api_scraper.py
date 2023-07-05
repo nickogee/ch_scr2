@@ -177,10 +177,13 @@ class AirbaScrapper():
                                     title = title.replace("'", '')
                                 
                                     description = prod_dct.get('description')
-                                    description = description.replace('«', '')
-                                    description = description.replace('»', '')
-                                    description = description.replace('"', '')
-                                    description = description.replace("'", '')
+                                    if description:
+                                        description = description.replace('«', '')
+                                        description = description.replace('»', '')
+                                        description = description.replace('"', '')
+                                        description = description.replace("'", '')
+                                    else:
+                                        description = ''
 
                                     images_ls = prod_dct.get('images')
                                     if images_ls:
