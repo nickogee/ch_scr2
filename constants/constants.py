@@ -82,3 +82,14 @@ DB_MGM_CATEGORY_CREATE_STR = f'''
                         scrap_count INTEGER DEFAULT 0
                         ) 
                     '''
+
+DB_AIR_CATEGORY_TABLE = 'air_category'
+DB_AIR_CATEGORY_CREATE_STR = f'''
+                        CREATE TABLE {DB_AIR_CATEGORY_TABLE}( 
+                        parent_id TEXT, 
+                        id TEXT PRIMARY KEY,
+                        name TEXT,
+                        category_lvl TEXT,
+                        scrap_count INTEGER DEFAULT 0
+                        ) 
+                    '''

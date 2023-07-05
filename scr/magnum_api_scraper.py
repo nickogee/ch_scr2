@@ -2,8 +2,8 @@ from scr.magnum_fetchs import PARAMS_TOKEN, URL_TOKEN, URL_CATEGORY, PARAMS_CATE
                                 REQ_LIMIT, URL_CATALOG, PARAMS_CATALOG
 import datetime
 from scr.share_functions import get_fetch, rand_pause
-from scr.database_worker import upload_to_db, table_exists, get_next_categoy_list_mgm, \
-                                update_category_mgm, update_parent_category_mgm
+from scr.database_worker import upload_to_db, table_exists, get_next_categoy_list_mgm_air, \
+                                update_category_mgm_air, update_parent_category_mgm_air
 from constants.constants import DB_PATH, DB_MGM_CATEGORY_TABLE, DB_MGM_CATEGORY_CREATE_STR, MERCANTS, \
                                 DB_ROW_DATA_CREATE_STR, DB_ROW_DATA_TABLE
 
@@ -110,8 +110,8 @@ class MagnumScrapper():
     def fill_category_data(self):
         '''Парсит данные по нужным категориям'''
 
-        self.category_list = get_next_categoy_list_mgm(db_path=DB_PATH, 
-                            table_name=DB_MGM_CATEGORY_TABLE)
+        self.category_list = get_next_categoy_list_mgm_air(db_path=DB_PATH, 
+                            table_name=DB_MGM_CATEGORY_TABLE, mercant='mgm', cat_lvl='2')
         
         # будет содержать текущее количество выполненных запросов, чтобы не привысить лимит запростов
         req_cnt = 0
@@ -184,7 +184,7 @@ class MagnumScrapper():
                     break
                 
                 print(f'Magnum - страница {page + 1} категории "{cat_tpl[3]}/{cat_tpl[2]}/{cat_tpl[1]}" запрос {req_cnt}')
-                rand_pause(-5)
+                rand_pause()
 
     def __upload_to_db(self):
         
@@ -192,12 +192,18 @@ class MagnumScrapper():
         upload_to_db(self.rezult, DB_PATH, DB_ROW_DATA_TABLE, DB_ROW_DATA_CREATE_STR, 'product_id')
         
         # обновляем scrap_count для "спарсеных" категорий 3-го уровня
-        update_category_mgm(self.category_update, DB_PATH, DB_MGM_CATEGORY_TABLE, 'id')
+        update_category_mgm_air(self.category_update, DB_PATH, DB_MGM_CATEGORY_TABLE, 'id')
 
         # после того как обновили scrap_count для "спарсеных" категорий 3-го уровня,
         # обновим scrap_count для родительской категории (2-го уровня) - возьмем наименьшее scrap_count среди дочерних категорий
         filter_tpl = ('parent_id', self.category_list[0][6])
-        update_parent_category_mgm(db_path=DB_PATH, table_name=DB_MGM_CATEGORY_TABLE, pk_column='id', filter_tpl=filter_tpl)
+        update_parent_category_mgm_air(db_path=DB_PATH, table_name=DB_MGM_CATEGORY_TABLE, pk_column='id', filter_tpl=filter_tpl)
+
+        # после того как обновили scrap_count для категорий 2-го уровня,
+        # обновим scrap_count для родительской категории (1-го уровня) - возьмем наименьшее scrap_count среди дочерних категорий
+        filter_tpl = ('parent_id', self.category_list[0][7])
+        update_parent_category_mgm_air(db_path=DB_PATH, table_name=DB_MGM_CATEGORY_TABLE, pk_column='id', filter_tpl=filter_tpl)
+
 
 
     def start(self):
