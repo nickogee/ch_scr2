@@ -149,10 +149,13 @@ class MagnumScrapper():
                         title = title.replace("'", '')
                         
                         description = prod_dct.get('descr')
-                        description = description.replace('«', '')
-                        description = description.replace('»', '')
-                        description = description.replace('"', '')
-                        description = description.replace("'", '')
+                        if description:
+                            description = description.replace('«', '')
+                            description = description.replace('»', '')
+                            description = description.replace('"', '')
+                            description = description.replace("'", '')
+                        else:
+                            description = ''
 
 
                         l = {
