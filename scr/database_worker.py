@@ -18,10 +18,11 @@ class DBSqlite():
     def table_exists(self): 
 
         try:
-            self.cursor.execute(f'''SELECT count(name) FROM sqlite_master WHERE TYPE = 'table' AND name = '{self.table_name}' ''') 
+            sql_txt = f'''SELECT count(name) FROM sqlite_master WHERE TYPE = 'table' AND name = '{self.table_name}' '''
+            self.cursor.execute(sql_txt) 
             return (self.cursor.fetchone()[0] == 1)
         except Exception as ex:
-            print(ex)
+            print('Не удалось выполнить запрос:', sql_txt, f'По причине: {ex}', sep='\n')
             return True
         
     
@@ -32,15 +33,16 @@ class DBSqlite():
             try: 
                 self.cursor.execute(self.table_create_str)
             except Exception as ex:
-                print(ex)
+                print('Не удалось выполнить запрос:', self.table_create_str, f'По причине: {ex}', sep='\n')
     
 
     def data_exists(self, product_dict:dict):
         try:
-            self.cursor.execute(f'''SELECT {self.pk_column} FROM {self.table_name} WHERE {self.pk_column} = {"'" + product_dict[self.pk_column] + "'"}''')
+            sql_txt = f'''SELECT {self.pk_column} FROM {self.table_name} WHERE {self.pk_column} = {"'" + product_dict[self.pk_column] + "'"}'''
+            self.cursor.execute(sql_txt)
             return bool(self.cursor.fetchall())
         except Exception as ex:
-            print(ex)
+            print('Не удалось выполнить запрос:', sql_txt, f'По причине: {ex}', sep='\n')
             return False
 
     def insert_data(self, product_dict:dict):
@@ -51,11 +53,11 @@ class DBSqlite():
         param_str = ', '.join(param_ls)
 
         try:
-            self.cursor.execute(f'''INSERT INTO {self.table_name} ({keys_str}) VALUES({param_str}) ''',
-                                tuple(product_dict.values())) 
+            sql_txt = f'''INSERT INTO {self.table_name} ({keys_str}) VALUES({param_str}) '''
+            self.cursor.execute(sql_txt, tuple(product_dict.values())) 
             self.connect.commit()
         except Exception as ex:
-            print(ex)
+            print('Не удалось выполнить запрос:', sql_txt, f'По причине: {ex}', sep='\n')
 
     def update_data(self, product_dict:dict):
 
@@ -71,10 +73,11 @@ class DBSqlite():
 
         items_str = ', '.join(items_ls)
         try:
-            self.cursor.execute(f'''UPDATE {self.table_name} SET {items_str} WHERE  {self.pk_column} = {"'" + product_dict[self.pk_column] + "'"}''')
+            sql_txt = f'''UPDATE {self.table_name} SET {items_str} WHERE  {self.pk_column} = {"'" + product_dict[self.pk_column] + "'"}'''
+            self.cursor.execute(sql_txt)
             self.connect.commit()
         except Exception as ex:
-            print(ex)
+            print('Не удалось выполнить запрос:', sql_txt, f'По причине: {ex}', sep='\n')
      
 
     def insert_update_data(self, rezult:list):
@@ -88,7 +91,8 @@ class DBSqlite():
 
     def get_next_category_glv(self, order_by:str):
         try:
-            result = self.cursor.execute(f'''SELECT * FROM {self.table_name} ORDER BY {order_by} LIMIT 1''').fetchone()
+            sql_txt = f'''SELECT * FROM {self.table_name} ORDER BY {order_by} LIMIT 1'''
+            result = self.cursor.execute(sql_txt).fetchone()
             result_dct = {
                     'title': result[0],
                     'slug': result[1],
@@ -96,12 +100,13 @@ class DBSqlite():
                     }
             return result_dct
         except Exception as ex:
-            print(ex)
+            print('Не удалось выполнить запрос:', sql_txt, f'По причине: {ex}', sep='\n')
             return None
     
     def get_next_category_abz(self, order_by:str):
         try:
-            result = self.cursor.execute(f'''SELECT * FROM {self.table_name} ORDER BY {order_by} LIMIT 1''').fetchone()
+            sql_txt = f'''SELECT * FROM {self.table_name} ORDER BY {order_by} LIMIT 1'''
+            result = self.cursor.execute(sql_txt).fetchone()
             result_dct = {
                     'title': result[0],
                     'href': result[1],
@@ -110,7 +115,7 @@ class DBSqlite():
                     }
             return result_dct
         except Exception as ex:
-            print(ex)
+            print('Не удалось выполнить запрос:', sql_txt, f'По причине: {ex}', sep='\n')
             return None
 
     def get_next_category_list_mgm_air(self, mercant:str, last_lvl:str):
@@ -150,16 +155,17 @@ class DBSqlite():
             result = self.cursor.execute(sql_txt).fetchall()
             return result
         except Exception as ex:
-            print(ex)
+            print('Не удалось выполнить запрос:', sql_txt, f'По причине: {ex}', sep='\n')
             return None
     
 
     def get_data(self, columns: str, filter_tpl: tuple):
         try:
-            result = self.cursor.execute(f'''SELECT {columns} FROM {self.table_name} WHERE {filter_tpl[0]} = {"'" + filter_tpl[1] + "'"}''')
+            sql_txt = f'''SELECT {columns} FROM {self.table_name} WHERE {filter_tpl[0]} = {"'" + filter_tpl[1] + "'"}'''
+            result = self.cursor.execute(sql_txt)
             return result
         except Exception as ex:
-            print(ex)
+            print('Не удалось выполнить запрос:', sql_txt, f'По причине: {ex}', sep='\n')
             return None
 
     def __del__(self):
@@ -167,9 +173,7 @@ class DBSqlite():
             self.cursor.close()
             self.connect.close()
         except Exception as ex:
-            print(ex)
-
-
+            print(f'Не удалось закрыть соединение с БД по причине: {ex}')
 
 
 
@@ -243,37 +247,7 @@ def update_parent_category_mgm_air(db_path, table_name, pk_column, filter_tpl):
     
     db_ses.update_data(cat_dct)
 
-
-# --------------------- Airba --------------------
-# def get_next_categoy_list_air(db_path, table_name):
-#     '''получает список категорий 4-го уровня, по которым нужно соберать данные'''
-
-#     db_ses = DBSqlite(db_path, table_name, '', '') 
-#     result_ls = db_ses.get_next_category_list_mgm_air('air', '3')
-#     return result_ls
-
-# def update_category_air(update_ls, db_path, table_name, pk_column):
-#     db_ses = DBSqlite(db_path, table_name, '', pk_column)
-#     for cat_dct in update_ls:
-#         db_ses.update_data(cat_dct)
-
-# def update_parent_category_air(db_path, table_name, pk_column, filter_tpl): 
-#     columns = 'scrap_count'
-#     db_ses = DBSqlite(db_path, table_name, None, pk_column)
-#     result_ls = db_ses.get_data(columns=columns, filter_tpl=filter_tpl).fetchall()
-#     sc_ls = [i[0] for i in result_ls]
-#     sc_min = min(sc_ls)
-
-#     cat_dct =   {
-#             'id': filter_tpl[1],
-#             'scrap_count': sc_min 
-#                 }
-    
-#     db_ses.update_data(cat_dct)
-
-
 # --------------------- XML --------------------
-
 def read_mercant_data(db_path, table_name, columns, filter_tpl):
     db_ses = DBSqlite(db_path, table_name, None, None)
     result_ls = db_ses.get_data(columns=columns, filter_tpl=filter_tpl).fetchall()
