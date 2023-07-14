@@ -48,12 +48,28 @@ class ArbuzApiScraper():
                 print(f'Arbuz - запрос {page_num} из {page_count} по {category_full_path}')
 
                 for product in products:
+
+                    title = product['name']
+                    title = title.replace('«', '')
+                    title = title.replace('»', '')
+                    title = title.replace('"', '')
+                    title = title.replace("'", '')
+                    
+                    description = product['description']
+                    if description:
+                        description = description.replace('«', '')
+                        description = description.replace('»', '')
+                        description = description.replace('"', '')
+                        description = description.replace("'", '')
+                    else:
+                        description = ''
+
                     l = {
                         'mercant_id': MERCANTS['abz'],
                         'mercant_name': 'abz',
                         'product_id': str(product['id']),
-                        'title':  product['name'],
-                        'description': product['description'],
+                        'title':  title,
+                        'description': description,
                         'url': f"https://arbuz.kz{product['uri']}",
                         'url_picture': product['image'],
                         'time_scrap': str(datetime.datetime.now().isoformat()),

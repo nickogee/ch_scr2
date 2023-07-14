@@ -38,12 +38,17 @@ class GlovoApiScraper():
 
                 for product in products:
 
-                    product_name = product['data']['name']
+                    title = product['data']['name']
+                    title = title.replace('«', '')
+                    title = title.replace('»', '')
+                    title = title.replace('"', '')
+                    title = title.replace("'", '')
+                    
                     l = {
                         'mercant_id': MERCANTS['glv'],
                         'mercant_name': 'glv',
                         'product_id': str(product['data']['id']),
-                        'title': product_name.replace("'", ''),
+                        'title': title,
                         'description': '',
                         # здесь отсутствует url товара (карточки товара), по этому сюда поместим
                         # url категории (он существует)
