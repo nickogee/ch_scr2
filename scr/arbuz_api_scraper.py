@@ -63,6 +63,15 @@ class ArbuzApiScraper():
                         description = description.replace("'", '')
                     else:
                         description = ''
+                    
+                    brand = product['brandName']
+                    if brand:
+                        brand = brand.replace('«', '')
+                        brand = brand.replace('»', '')
+                        brand = brand.replace('"', '')
+                        brand = brand.replace("'", '')
+                    else:
+                        brand = ''
 
                     l = {
                         'mercant_id': MERCANTS['abz'],
@@ -75,7 +84,7 @@ class ArbuzApiScraper():
                         'time_scrap': str(datetime.datetime.now().isoformat()),
                         'sub_category': sub_category,
                         'category_full_path': category_full_path,
-                        'brand': product['brandName'],
+                        'brand': brand,
                         'cost': product['priceActual'],
                         'prev_cost': product['pricePrevious']
                     }
