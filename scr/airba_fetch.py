@@ -34,7 +34,7 @@ PARAMS_CATEGORY = {
 
 ############################### Основной запрос к каталогу
 URL_CATALOG = 'https://backend.airbafresh.kz/api/nomenclature/catalog'
-REQ_LIMIT = 20  # лимит запросов на каждый запуск скрипта
+REQ_LIMIT = 30  # лимит запросов на каждый запуск скрипта
 CATALOG = '@CAT@'
 PAGE = '@PAGE@'
 

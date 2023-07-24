@@ -146,7 +146,7 @@ class DBSqlite():
                     FROM {mercant}_category mc
                     WHERE mc.category_lvl = '{last_lvl}'
                     ORDER BY mc.scrap_count 
-                    LIMIT 1
+                    LIMIT 2
                     )
                 ORDER BY lvl.scrap_count   
                 '''
