@@ -203,6 +203,16 @@ class AirbaScrapper():
                                         prev_cost = int(prev_cost)
                                     else:
                                         prev_cost = 0
+                                    
+
+                                    brand = str(prod_dct.get('brand'))
+                                    if brand:
+                                        brand = brand.replace('«', '')
+                                        brand = brand.replace('»', '')
+                                        brand = brand.replace('"', '')
+                                        brand = brand.replace("'", '')
+                                    else:
+                                        brand = ''
 
 
                                     l = {
@@ -216,7 +226,7 @@ class AirbaScrapper():
                                     'time_scrap': str(datetime.datetime.now().isoformat()),
                                     'sub_category': cat_tpl[1],
                                     'category_full_path': category_full_path,
-                                    'brand': str(prod_dct.get('brand')),
+                                    'brand': brand,
                                     'cost': str(int(prod_dct.get('price_actual'))),
                                     'prev_cost': str(prev_cost)
                                         }
