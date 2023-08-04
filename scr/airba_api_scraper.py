@@ -258,18 +258,27 @@ class AirbaScrapper():
 
         # после того как обновили scrap_count для "спарсеных" категорий 4-го уровня,
         # обновим scrap_count для родительской категории (3-го уровня) - возьмем наименьшее scrap_count среди дочерних категорий
-        filter_tpl = ('parent_id', self.category_list[0][6])
-        update_parent_category_mgm_air(db_path=DB_PATH, table_name=DB_AIR_CATEGORY_TABLE, pk_column='id', filter_tpl=filter_tpl)
+        parent_set = {i[6] for i in self.category_list}
+        for par_id in parent_set:
+            # filter_tpl = ('parent_id', self.category_list[0][6])
+            filter_tpl = ('parent_id', par_id)
+            update_parent_category_mgm_air(db_path=DB_PATH, table_name=DB_AIR_CATEGORY_TABLE, pk_column='id', filter_tpl=filter_tpl)
 
         # после того как обновили scrap_count для категорий 3-го уровня,
         # обновим scrap_count для родительской категории (2-го уровня) - возьмем наименьшее scrap_count среди дочерних категорий
-        filter_tpl = ('parent_id', self.category_list[0][7])
-        update_parent_category_mgm_air(db_path=DB_PATH, table_name=DB_AIR_CATEGORY_TABLE, pk_column='id', filter_tpl=filter_tpl)
+        parent_set = {i[7] for i in self.category_list}
+        for par_id in parent_set:
+            # filter_tpl = ('parent_id', self.category_list[0][7])
+            filter_tpl = ('parent_id', par_id)
+            update_parent_category_mgm_air(db_path=DB_PATH, table_name=DB_AIR_CATEGORY_TABLE, pk_column='id', filter_tpl=filter_tpl)
 
         # после того как обновили scrap_count для категорий 2-го уровня,
         # обновим scrap_count для родительской категории (1-го уровня) - возьмем наименьшее scrap_count среди дочерних категорий
-        filter_tpl = ('parent_id', self.category_list[0][8])
-        update_parent_category_mgm_air(db_path=DB_PATH, table_name=DB_AIR_CATEGORY_TABLE, pk_column='id', filter_tpl=filter_tpl)
+        parent_set = {i[7] for i in self.category_list}
+        for par_id in parent_set:
+            # filter_tpl = ('parent_id', self.category_list[0][8])
+            filter_tpl = ('parent_id', par_id)
+            update_parent_category_mgm_air(db_path=DB_PATH, table_name=DB_AIR_CATEGORY_TABLE, pk_column='id', filter_tpl=filter_tpl)
 
         
 
