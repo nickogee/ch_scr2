@@ -18,3 +18,5 @@ launch.json
 
 db/*.db
 uploads/*.xml
+
+.DS_Store

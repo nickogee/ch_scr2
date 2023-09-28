@@ -106,12 +106,22 @@ class ArbuzApiScraper():
         self.__upload_to_db()
 
 
+def fast_category_scraper():
+    
+    # Свежие Овощи и фрукты
+    fast_caterory = '225164'
+   
+    arbuz = ArbuzApiScraper(fast_caterory)
+    arbuz.start()
+
+
 def main():
 
     next_caterory_dct = get_next_categoy_abz(DB_PATH, DB_ABZ_CATEGORY_TABLE, DB_ABZ_CATEGORY_CREATE_STR, 'href')
 
     arbuz = ArbuzApiScraper(next_caterory_dct['catalog'])
     arbuz.start()
+
 
 
 if __name__ == '__main__':

@@ -78,6 +78,15 @@ class GlovoApiScraper():
         self.__upload_to_db()
 
 
+def fast_category_scraper():
+    
+    # Фрукты и Овощи
+    fast_caterory_dct = {'slug': 'frukty-i-ovoshchi-sc.261845244'}
+
+    glovo = GlovoApiScraper(fast_caterory_dct)
+    glovo.start()
+
+
 def main():
 
     next_caterory_dct = get_next_categoy_glv(DB_PATH, DB_GLV_CATEGORY_TABLE, DB_GLV_CATEGORY_CREATE_STR, 'slug')
