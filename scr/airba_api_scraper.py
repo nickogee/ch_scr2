@@ -9,11 +9,13 @@ from constants.constants import DB_PATH, DB_AIR_CATEGORY_TABLE, DB_AIR_CATEGORY_
 
 
 class AirbaScrapper():
-    def __init__(self) -> None:
+    def __init__(self, fast_category_id=None) -> None:
         self.date_time_now = datetime.datetime.now()
         self.rezult = []
         self.category_list = []
         self.category_update = []
+        self.fast_category_id = fast_category_id
+        self.limit_off = bool(fast_category_id)
         self.workflow = WORKFLOW
     
     def fill_category_table(self):
@@ -113,13 +115,13 @@ class AirbaScrapper():
         '''Парсит данные по нужным категориям'''
         
         self.category_list = get_next_categoy_list_mgm_air(db_path=DB_PATH, 
-                            table_name=DB_AIR_CATEGORY_TABLE, mercant='air', cat_lvl='3')
+                            table_name=DB_AIR_CATEGORY_TABLE, mercant='air', cat_lvl='3', fast_category_id=self.fast_category_id)
         
         # будет содержать текущее количество выполненных запросов, чтобы не привысить лимит запростов
         req_cnt = 0
         for cat_tpl in self.category_list:
 
-            if req_cnt > REQ_LIMIT:
+            if (not self.limit_off) and (req_cnt > REQ_LIMIT):
                 break
             
             # текущая категория 4-го уровня
@@ -286,6 +288,18 @@ class AirbaScrapper():
         self.fill_category_table()
         self.fill_category_data()
         self.__upload_to_db()
+
+
+def fast_category_scraper():
+
+    fast_category_ls = [
+        '1782', # Фрукты, ягоды
+        '1785'  # Овощи, грибы и зелень
+    ]
+
+    for fast_category in fast_category_ls:
+        airba = AirbaScrapper(fast_category)
+        airba.start()    
 
 
 def main():

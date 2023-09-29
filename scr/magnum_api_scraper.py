@@ -9,11 +9,13 @@ from constants.constants import DB_PATH, DB_MGM_CATEGORY_TABLE, DB_MGM_CATEGORY_
 
 
 class MagnumScrapper():
-    def __init__(self) -> None:
+    def __init__(self, fast_category_id=None) -> None:
         self.date_time_now = datetime.datetime.now()
         self.rezult = []
         self.category_list = []
         self.category_update = []
+        self.fast_category_id = fast_category_id
+        self.limit_off = bool(fast_category_id)
         self.token = None
         self.get_token()
         
@@ -111,13 +113,13 @@ class MagnumScrapper():
         '''Парсит данные по нужным категориям'''
 
         self.category_list = get_next_categoy_list_mgm_air(db_path=DB_PATH, 
-                            table_name=DB_MGM_CATEGORY_TABLE, mercant='mgm', cat_lvl='2')
+                            table_name=DB_MGM_CATEGORY_TABLE, mercant='mgm', cat_lvl='2', fast_category_id=self.fast_category_id)
         
         # будет содержать текущее количество выполненных запросов, чтобы не привысить лимит запростов
         req_cnt = 0
         for cat_tpl in self.category_list:
 
-            if req_cnt > REQ_LIMIT:
+            if (not self.limit_off) and (req_cnt > REQ_LIMIT):
                 break
 
             # максимальное количество страниц одной категории 3-го уровня - 20
@@ -218,6 +220,15 @@ class MagnumScrapper():
         self.fill_category_table()
         self.fill_category_data()
         self.__upload_to_db()
+
+
+def fast_category_scraper():
+
+    # Овощи, фрукты, ягоды, зелень, грибы
+    fast_category = '1103'
+
+    magnum = MagnumScrapper(fast_category_id=fast_category)
+    magnum.start()
 
 
 def main():

@@ -159,6 +159,53 @@ class DBSqlite():
             return None
     
 
+    def get_category_list_mgm_air(self, mercant:str, last_lvl:str, fast_category_id):
+
+        # Получим список из id категорий last_lvl + 1 уровня, 
+        # у которых parent_id имеет имнимальное значение scrap_count из всех категорий last_lvl уровня.
+        # (для "быстрого парсера" по нужной категории)
+        # Отсортируем их по возростанию scrap_count, чтобы первыми соберать самые "давние" подкатегории 
+        if fast_category_id:
+            fast_category_str = f"AND mc.id = '{fast_category_id}'"
+        else:
+            fast_category_str = ''
+
+        sql_txt = f'''
+                SELECT
+                    lvl.id as id,
+                    lvl.name as name,
+                    lvl_2.name as parent_name,
+                    lvl_3.name as head_parent_name,
+                    lvl.scrap_count as scrap_count,
+                    lvl_2.scrap_count as scrap_count_parent,
+                    lvl_2.id as parent1_id,
+                    lvl_3.id as parent2_id,
+                    lvl_3.parent_id as parent3_id
+                FROM 
+                    {mercant}_category as lvl
+                INNER JOIN {mercant}_category as lvl_2 
+                ON lvl.parent_id = lvl_2.id
+                INNER JOIN {mercant}_category as lvl_3 
+                ON lvl_2.parent_id = lvl_3.id
+                WHERE lvl.parent_id IN 
+                    (SELECT 
+                        mc.id
+                    FROM {mercant}_category mc
+                    WHERE mc.category_lvl = '{last_lvl}' {fast_category_str}
+                    ORDER BY mc.scrap_count 
+                    LIMIT 2
+                    )
+                ORDER BY lvl.scrap_count   
+                '''
+
+        try:  
+            result = self.cursor.execute(sql_txt).fetchall()
+            return result
+        except Exception as ex:
+            print('Не удалось выполнить запрос:', sql_txt, f'По причине: {ex}', sep='\n')
+            return None
+    
+
     def get_data(self, columns: str, filter_tpl: tuple):
         try:
             sql_txt = f'''SELECT {columns} FROM {self.table_name} WHERE {filter_tpl[0]} = {"'" + filter_tpl[1] + "'"}'''
@@ -221,11 +268,12 @@ def get_next_categoy_abz(db_path, table_name, table_create_str, pk_column):
             
 
 # --------------------- Magnum + Airba --------------------
-def get_next_categoy_list_mgm_air(db_path, table_name, mercant:str, cat_lvl:str):
+def get_next_categoy_list_mgm_air(db_path, table_name, mercant:str, cat_lvl:str, fast_category_id):
     '''получает список категорий 3-го уровня, по которым нужно соберать данные'''
 
     db_ses = DBSqlite(db_path, table_name, '', '') 
-    result_ls = db_ses.get_next_category_list_mgm_air(mercant, cat_lvl)
+    # result_ls = db_ses.get_next_category_list_mgm_air(mercant, cat_lvl)
+    result_ls = db_ses.get_category_list_mgm_air(mercant, cat_lvl, fast_category_id)
     return result_ls
 
 def update_category_mgm_air(update_ls, db_path, table_name, pk_column):

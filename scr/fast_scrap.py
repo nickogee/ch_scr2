@@ -15,11 +15,11 @@ if __name__ == '__main__':
         print(ex)
 
     try:
-        mgm.main()
+        mgm.fast_category_scraper()
     except Exception as ex:
         print(ex)
            
-    # try:
-    #     air.main()
-    # except Exception as ex:
-    #     print(ex)
+    try:
+        air.fast_category_scraper()
+    except Exception as ex:
+        print(ex)

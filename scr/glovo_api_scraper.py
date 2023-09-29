@@ -81,9 +81,10 @@ class GlovoApiScraper():
 def fast_category_scraper():
     
     # Фрукты и Овощи
-    fast_caterory_dct = {'slug': 'frukty-i-ovoshchi-sc.261845244'}
+    fast_category_dct = {'slug': 'frukty-i-ovoshchi-sc.261845244',
+                         'title': 'Фрукты и Овощи'}
 
-    glovo = GlovoApiScraper(fast_caterory_dct)
+    glovo = GlovoApiScraper(fast_category_dct)
     glovo.start()
 
 

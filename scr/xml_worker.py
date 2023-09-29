@@ -1,6 +1,6 @@
 from constants.constants import UPLOAD_FOLDER, MERCANTS, DB_ROW_DATA_COLUMNS_LS, DB_PATH, DB_ROW_DATA_TABLE
 from xml.etree import ElementTree as ET
-from datetime import datetime
+from datetime import datetime, timedelta
 from scr.database_worker import read_mercant_data
 
 
@@ -71,6 +71,13 @@ def create_xml_str(result: list):
                short_empty_elements=False)
 
 
+def datetime_str_to_obj(dt_str):
+    dt, _, us = dt_str.partition(".")
+    dt = datetime.strptime(dt, "%Y-%m-%dT%H:%M:%S")
+    us = int(us.rstrip("Z"), 10)
+    return dt + timedelta(microseconds=us)
+
+
 def make_data_file():
 
     columns_str = ', '.join(DB_ROW_DATA_COLUMNS_LS)
@@ -82,8 +89,15 @@ def make_data_file():
 
             result = []
             for dt_line in db_result:
-                ln_dct = {DB_ROW_DATA_COLUMNS_LS[i]: dt_line[i] for i in range(0, len(DB_ROW_DATA_COLUMNS_LS))}
-                result.append(ln_dct)
+                timestamp = datetime_str_to_obj(dt_line[12])
+                now = datetime.now()
+                delta = now - timestamp
+                days = delta.days
+
+                if days <= 60:
+                    ln_dct = {DB_ROW_DATA_COLUMNS_LS[i]: dt_line[i] for i in range(0, len(DB_ROW_DATA_COLUMNS_LS))}
+                
+                    result.append(ln_dct)
 
             create_xml_str(result)
         

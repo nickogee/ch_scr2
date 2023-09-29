@@ -109,9 +109,9 @@ class ArbuzApiScraper():
 def fast_category_scraper():
     
     # Свежие Овощи и фрукты
-    fast_caterory = '225164'
+    fast_category = '225164'
    
-    arbuz = ArbuzApiScraper(fast_caterory)
+    arbuz = ArbuzApiScraper(fast_category)
     arbuz.start()
 
 

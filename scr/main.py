@@ -4,23 +4,12 @@ import scr.magnum_api_scraper as mgm
 import scr.airba_api_scraper as air
 
 if __name__ == '__main__':
-    try:
-        abz.main()
-    except Exception as ex:
-        print(ex)
+   
+    abz.main()
     
-    try:
-        glv.main()
-    except Exception as ex:
-        print(ex)
-
-    try:
-        mgm.main()
-    except Exception as ex:
-        print(ex)
-           
-    try:
-        air.main()
-    except Exception as ex:
-        print(ex)
+    glv.main()
+    
+    mgm.main()
+    
+    air.main()
         
