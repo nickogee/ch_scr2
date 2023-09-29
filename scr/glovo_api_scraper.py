@@ -12,10 +12,21 @@ class GlovoApiScraper():
     def __init__(self, cat_dct):
         self.categorie_dict = cat_dct
         self.rezult = []
-        self.head_response = get_fetch(URL_FST.replace(SLUG, cat_dct['slug']), PARAMS)
-        self.categories = self.head_response.json()['data']['body'][0]['data']['elements']
         self.df = None
         self.date_time_now = datetime.datetime.now()
+        self.head_response = get_fetch(URL_FST.replace(SLUG, cat_dct['slug']), PARAMS)
+        
+        head_resp_json = self.head_response.json()
+        data = head_resp_json.get('data')
+        if data:
+            body = data.get('body')
+            if body and len(body) > 0:
+                body_data = body[0].get('data')
+
+                if body_data:
+                    self.categories = body_data['elements']
+        
+        # self.categories = self.head_response.json()['data']['body'][0]['data']['elements']
 
     def fill_rezult(self):
 
