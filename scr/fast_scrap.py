@@ -7,7 +7,7 @@ import datetime
 
 def run_fast_scrapers():
 
-    if datetime.datetime.today().weekday() == 7:
+    if datetime.datetime.today().weekday() == 6:
         try:
             abz.fast_category_scraper()
         except Exception as ex:
