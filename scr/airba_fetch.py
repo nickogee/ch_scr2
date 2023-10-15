@@ -1,5 +1,6 @@
 
-WORKFLOW = '28f8d037-3499-4186-9e08-6a2c4ae48cf6'
+# WORKFLOW = '28f8d037-3499-4186-9e08-6a2c4ae48cf6'
+WORKFLOW = '25882eb0-327c-4b7c-92d7-6ae5d8fafbe7'
 
 ############################### Запрос к иерархии категорий
 URL_CATEGORY = 'https://backend.airbafresh.kz/api/nomenclature/catalog-tree/'
@@ -8,18 +9,20 @@ PARAMS_CATEGORY = {
     "headers": {
         'method': 'GET',
         'scheme': 'https',
+        'path': '/api/nomenclature/catalog-tree/',
         'authority': 'backend.airbafresh.kz',
         'accept': '*/*',
         'content-type': 'application/json',
-        'app-version': '1.0.25',
+        'app-version': '1.0.30',
         'accept-encoding': 'gzip, deflate, br',
         'app-platform': 'iOS',
         'language': 'ru',
-        'user-agent': 'Airba Fresh/10 CFNetwork/1408.0.4 Darwin/22.5.0',
+        'user-agent': 'Airba%20Fresh/2 CFNetwork/1410.0.3 Darwin/22.6.0',
         'accept-language': 'ru',
-        'workflow': '',
-        'Host': 'backend.airbafresh.kz',
-        'Connection': 'close'
+        'workflow': WORKFLOW,
+        'mindbox-device-uuid': 'A961E0CE-70C1-41F0-8BF2-FC0E31B1A85F',
+        # 'Host': 'backend.airbafresh.kz',
+        # 'Connection': 'close'
 
      },
 
@@ -47,15 +50,16 @@ PARAMS_CATALOG = {
         'authority': 'backend.airbafresh.kz',
         'accept': '*/*',
         'content-type': 'application/json',
-        'app-version': '1.0.25',
+        'app-version': '1.0.30',
         'accept-encoding': 'gzip, deflate, br',
         'app-platform': 'iOS',
         'language': 'ru',
-        'user-agent': 'Airba Fresh/10 CFNetwork/1408.0.4 Darwin/22.5.0',
+        'user-agent': 'Airba%20Fresh/2 CFNetwork/1410.0.3 Darwin/22.6.0',
         'accept-language': 'ru',
         'workflow': WORKFLOW,
-        'Host': 'backend.airbafresh.kz',
-        'Connection': 'close'
+        'mindbox-device-uuid': 'A961E0CE-70C1-41F0-8BF2-FC0E31B1A85F',
+        # 'Host': 'backend.airbafresh.kz',
+        # 'Connection': 'close'
 
      },
 
