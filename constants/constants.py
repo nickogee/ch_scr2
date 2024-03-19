@@ -9,7 +9,7 @@ MERCANTS = {
     'air': 'edf30565-d0d9-40ec-9759-6fde57220037',
     'glv': 'cef9c961-c2e7-4d8a-9312-4d06b9fe8866',
     'abz': '8bfdb88d-c8cc-4c2f-a363-e545296066b8',
-    'vlt': '43d577ed-1a3a-409d-a85d-7113a1c184dd'
+    'vlt': '70e6a58b-bf0a-4d53-b2b8-af4e0399047f'
 }
 
 UPLOAD_FOLDER = f'{DIR}/uploads/'

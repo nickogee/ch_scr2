@@ -98,6 +98,9 @@ class VoltScrapper():
                                     table_name=DB_VLT_CATEGORY_TABLE,
                                     table_create_str=DB_VLT_CATEGORY_CREATE_STR,
                                     pk_column='id')
+            
+        else:
+            print('Токен отсутствует')
 
 
     def fill_category_data(self):
@@ -188,6 +191,9 @@ class VoltScrapper():
 
                     
                 print(f'Volt -  категория "/{category_name}/" товаров {sku_count}')
+
+        else:
+            print('Токен отсутствует')
 
     def __upload_to_db(self):
         
