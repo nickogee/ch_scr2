@@ -18,7 +18,7 @@ class DBSqlite():
     def table_exists(self): 
 
         try:
-            sql_txt = f'''SELECT count(name) FROM sqlite_schema WHERE TYPE = 'table' AND name = '{self.table_name}' '''
+            sql_txt = f'''SELECT count(name) FROM sqlite_master WHERE TYPE = 'table' AND name = '{self.table_name}' '''
             self.cursor.execute(sql_txt) 
             return (self.cursor.fetchone()[0] == 1)
         except Exception as ex:
