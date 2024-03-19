@@ -6,6 +6,8 @@ from scr.database_worker import upload_to_db, table_exists, get_next_categoy_vlt
                                 get_data_from, truncate_table, create_table
 from constants.constants import DB_PATH, DB_VLT_CATEGORY_TABLE, DB_VLT_CATEGORY_CREATE_STR, MERCANTS, \
                                 DB_ROW_DATA_CREATE_STR, DB_ROW_DATA_TABLE, DB_VLT_REFRESH_TOKEN_TABLE, DB_VLT_REFRESH_TOKEN_CREATE_STR
+import random
+
 
 
 class VoltScrapper():
@@ -16,10 +18,13 @@ class VoltScrapper():
         self.category_update = []
         self.fast_category_ls = fast_category_ls
         self.refresh_token = None
+        self.userlocationlng = f'76.{str(random.randint(889433, 960513))}'
+        self.userlocationlat = f'43.2{str(random.randint(32015, 49646))}'
         self.token = None
         self.create_refresh_token_table()
         # self.get_token()
         
+
 
     def create_refresh_token_table(self):
         create_table(db_path=DB_PATH, 
@@ -42,6 +47,7 @@ class VoltScrapper():
         if self.refresh_token:
             if not self.token:
                 PARAMS_TOKEN['body'] = PARAMS_TOKEN['body'].replace(REFRESH_TOKEN_MASK, self.refresh_token)
+
                 resp = get_fetch(url=URL_TOKEN, params=PARAMS_TOKEN)
                 resp_js = resp.json()
                 
@@ -71,6 +77,8 @@ class VoltScrapper():
                 # для самого верхнего уровня категорий PARENT_ID пустой
                 params_head = PARAMS_CATEGORY.copy()
                 params_head['headers']['Authorization'] = f'Bearer {self.token}'
+                params_head['headers']['userlocationlng'] = self.userlocationlng
+                params_head['headers']['userlocationlat'] = self.userlocationlat
                 
                 resp = get_fetch(url=URL_CATEGORY, params=params_head)
                 resp_js = resp.json()
@@ -120,7 +128,9 @@ class VoltScrapper():
                 params = PARAMS_CATALOG.copy()
                 params['headers']['path'] = params['headers']['path'].replace(CURRENT_CATEGORY_MASK, cat_dct['id'])
                 params['headers']['Authorization'] = f'Bearer {self.token}'
-                
+                params['headers']['userlocationlng'] = self.userlocationlng
+                params['headers']['userlocationlat'] = self.userlocationlat
+
                 url = URL_CATALOG.replace(CURRENT_CATEGORY_MASK, cat_dct['id'])
                 resp = get_fetch(url=url, params=params)
                 resp_js = resp.json()

@@ -44,8 +44,8 @@ PARAMS_CATALOG = {
         'w-wolt-session-id': '1848DA4B-55DB-4593-BF98-2E309C38D53C',
         'platform': 'iPhone',
         'user-agent': 'Wolt/34900; Build/8818; iOS/16.6.1; iPhone; ru',
-        'userlocationlng': '76.865025',
-        'userlocationlat': '43.243218'
+        'userlocationlng': '',
+        'userlocationlat': ''
      },
 
     "params": {
@@ -80,8 +80,8 @@ PARAMS_CATEGORY = {
         'w-wolt-session-id': '1848DA4B-55DB-4593-BF98-2E309C38D53C',
         'platform': 'iPhone',
         'user-agent': 'Wolt/34900; Build/8818; iOS/16.6.1; iPhone; ru',
-        'userlocationlng': '76.865025',
-        'userlocationlat': '43.243218'
+        'userlocationlng': '',
+        'userlocationlat': ''
      },
 
     "params": {
