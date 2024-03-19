@@ -8,7 +8,8 @@ MERCANTS = {
     'mgm': '24c85cdd-cff6-4e60-a32c-e2193d08f964',
     'air': 'edf30565-d0d9-40ec-9759-6fde57220037',
     'glv': 'cef9c961-c2e7-4d8a-9312-4d06b9fe8866',
-    'abz': '8bfdb88d-c8cc-4c2f-a363-e545296066b8'
+    'abz': '8bfdb88d-c8cc-4c2f-a363-e545296066b8',
+    'vlt': '43d577ed-1a3a-409d-a85d-7113a1c184dd'
 }
 
 UPLOAD_FOLDER = f'{DIR}/uploads/'
@@ -35,7 +36,7 @@ DB_ROW_DATA_COLUMNS_LS = ['mercant_id',
 
 DB_ROW_DATA_TABLE = 'row_data'
 DB_ROW_DATA_CREATE_STR = f'''
-                        CREATE TABLE {DB_ROW_DATA_TABLE}( 
+                        CREATE TABLE IF NOT EXISTS {DB_ROW_DATA_TABLE}( 
                         mercant_id TEXT, 
                         mercant_name TEXT, 
                         product_id TEXT PRIMARY KEY, 
@@ -55,7 +56,7 @@ DB_ROW_DATA_CREATE_STR = f'''
 
 DB_GLV_CATEGORY_TABLE = 'glv_category'
 DB_GLV_CATEGORY_CREATE_STR = f'''
-                        CREATE TABLE {DB_GLV_CATEGORY_TABLE}( 
+                        CREATE TABLE IF NOT EXISTS {DB_GLV_CATEGORY_TABLE}( 
                         title TEXT, 
                         slug TEXT PRIMARY KEY,
                         scrap_count INTEGER DEFAULT 0
@@ -64,7 +65,7 @@ DB_GLV_CATEGORY_CREATE_STR = f'''
 
 DB_ABZ_CATEGORY_TABLE = 'abz_category'
 DB_ABZ_CATEGORY_CREATE_STR = f'''
-                        CREATE TABLE {DB_ABZ_CATEGORY_TABLE}( 
+                        CREATE TABLE IF NOT EXISTS {DB_ABZ_CATEGORY_TABLE}( 
                         title TEXT, 
                         href TEXT PRIMARY KEY,
                         catalog TEXT,
@@ -74,7 +75,7 @@ DB_ABZ_CATEGORY_CREATE_STR = f'''
 
 DB_MGM_CATEGORY_TABLE = 'mgm_category'
 DB_MGM_CATEGORY_CREATE_STR = f'''
-                        CREATE TABLE {DB_MGM_CATEGORY_TABLE}( 
+                        CREATE TABLE IF NOT EXISTS {DB_MGM_CATEGORY_TABLE}( 
                         parent_id TEXT, 
                         id TEXT PRIMARY KEY,
                         name TEXT,
@@ -85,11 +86,27 @@ DB_MGM_CATEGORY_CREATE_STR = f'''
 
 DB_AIR_CATEGORY_TABLE = 'air_category'
 DB_AIR_CATEGORY_CREATE_STR = f'''
-                        CREATE TABLE {DB_AIR_CATEGORY_TABLE}( 
+                        CREATE TABLE IF NOT EXISTS {DB_AIR_CATEGORY_TABLE}( 
                         parent_id TEXT, 
                         id TEXT PRIMARY KEY,
                         name TEXT,
                         category_lvl TEXT,
                         scrap_count INTEGER DEFAULT 0
+                        ) 
+                    '''
+
+DB_VLT_CATEGORY_TABLE = 'vlt_category'
+DB_VLT_CATEGORY_CREATE_STR = f'''
+                        CREATE TABLE IF NOT EXISTS {DB_VLT_CATEGORY_TABLE}(
+                        id TEXT PRIMARY KEY,
+                        name TEXT,
+                        scrap_count INTEGER DEFAULT 0
+                        ) 
+                    '''
+
+DB_VLT_REFRESH_TOKEN_TABLE = 'vlt_refresh_token'
+DB_VLT_REFRESH_TOKEN_CREATE_STR = f'''
+                        CREATE TABLE IF NOT EXISTS {DB_VLT_REFRESH_TOKEN_TABLE}( 
+                        refresh_token TEXT PRIMARY KEY
                         ) 
                     '''

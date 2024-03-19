@@ -7,7 +7,8 @@ scr/arbuz_fetchs.py
 scr/database_worker.py
 scr/glovo_api_scraper.py
 scr/glovo_fetchs.py
-scr/kaspi.py
+scr/volt_api_scraper.py
+scr/volt_fetchs.py
 scr/main.py
 scr/share_functions.py
 scr/test.py

@@ -32,3 +32,10 @@ def get_fetch(url, params):
 def rand_pause(add_sec = 0):
         time.sleep(15 + random.randint(-10, 15) + add_sec)
 
+
+def format_name(raw_name:str):
+    name_ls = [i for i in raw_name if i.isalpha() or i in [' ', '-', '/', '_']]
+    name = ''.join(name_ls)
+    name = name.strip()
+    return name.capitalize()
+

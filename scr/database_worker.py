@@ -18,7 +18,7 @@ class DBSqlite():
     def table_exists(self): 
 
         try:
-            sql_txt = f'''SELECT count(name) FROM sqlite_master WHERE TYPE = 'table' AND name = '{self.table_name}' '''
+            sql_txt = f'''SELECT count(name) FROM sqlite_schema WHERE TYPE = 'table' AND name = '{self.table_name}' '''
             self.cursor.execute(sql_txt) 
             return (self.cursor.fetchone()[0] == 1)
         except Exception as ex:
@@ -60,7 +60,7 @@ class DBSqlite():
             print('Не удалось выполнить запрос:', sql_txt, f'По причине: {ex}', sep='\n')
 
     def update_data(self, product_dict:dict):
-
+        sql_txt = ''
         items_ls = []
         for key, val in product_dict.items():
 
@@ -159,6 +159,28 @@ class DBSqlite():
             return None
     
 
+    def get_next_category_vlt(self, order_by:str, fast_category_id):
+        
+        if fast_category_id:
+            condition = f"WHERE id = '{fast_category_id}'"
+        else:
+            condition = "WHERE id <> '63443f7efed9bfd239e95b30'"
+           
+
+        try:
+            sql_txt = f'''SELECT * FROM {self.table_name} {condition} ORDER BY {order_by} LIMIT 1'''
+            result = self.cursor.execute(sql_txt).fetchone()
+            result_dct = {
+                    'id': result[0],
+                    'name': result[1],
+                    'scrap_count': result[2],
+                    }
+            return result_dct
+        except Exception as ex:
+            print('Не удалось выполнить запрос:', sql_txt, f'По причине: {ex}', sep='\n')
+            return None
+        
+
     def get_category_list_mgm_air(self, mercant:str, last_lvl:str, fast_category_id):
 
         # Получим список из id категорий last_lvl + 1 уровня, 
@@ -207,14 +229,30 @@ class DBSqlite():
     
 
     def get_data(self, columns: str, filter_tpl: tuple):
+
         try:
-            sql_txt = f'''SELECT {columns} FROM {self.table_name} WHERE {filter_tpl[0]} = {"'" + filter_tpl[1] + "'"}'''
+            if filter_tpl:
+                sql_txt = f'''SELECT {columns} FROM {self.table_name} WHERE {filter_tpl[0]} = {"'" + filter_tpl[1] + "'"}'''
+            else:
+                sql_txt = f'''SELECT {columns} FROM {self.table_name}'''
+
             result = self.cursor.execute(sql_txt)
             return result
         except Exception as ex:
             print('Не удалось выполнить запрос:', sql_txt, f'По причине: {ex}', sep='\n')
             return None
+        
+    def truncate_table(self):
+        sql_txt = f'DELETE FROM {self.table_name};'
+        try:
+            result = self.cursor.execute(sql_txt)
+            self.connect.commit()
+            return True
+        except Exception as ex:
+            print('Не удалось выполнить запрос:', sql_txt, f'По причине: {ex}', sep='\n')
+            return False
 
+    
     def __del__(self):
         try:
             self.cursor.close()
@@ -230,6 +268,46 @@ def upload_to_db(rezult, db_path, table_name, table_create_str, pk_column):
     db_ses.crate_table()
     db_ses.insert_update_data(rezult)
 
+
+def get_data_from(db_path, table_name, columns: str, filter_tpl: tuple):
+    db_ses = DBSqlite(db_path, table_name, None, None)
+    result_ls = db_ses.get_data(columns=columns, filter_tpl=filter_tpl).fetchall()
+    return result_ls
+
+
+def truncate_table(db_path, table_name: str):
+    db_ses = DBSqlite(db_path, table_name, None, None)
+    return db_ses.truncate_table()
+
+
+def create_table(db_path, table_name, table_create_str):
+    db_ses = DBSqlite(db_path, table_name, table_create_str, None)
+    db_ses.crate_table()
+
+
+# --------------------- Volt --------------------
+def get_next_categoy_vlt(db_path, table_name, pk_column, fast_category_ls):
+    
+    db_ses = DBSqlite(db_path, table_name, table_create_str=None, pk_column=pk_column)
+    ls = []
+    if fast_category_ls:
+        for current_cat in fast_category_ls:
+            result_dct = db_ses.get_next_category_vlt(order_by='scrap_count', fast_category_id=current_cat)
+            ls.append(result_dct)
+
+            result_dct_to_update = result_dct.copy()
+            result_dct_to_update['scrap_count'] += 1
+            db_ses.update_data(result_dct_to_update)
+    else:
+        result_dct = db_ses.get_next_category_vlt(order_by='scrap_count', fast_category_id=None)
+        ls.append(result_dct)
+
+        result_dct_to_update = result_dct.copy()
+        result_dct_to_update['scrap_count'] += 1
+        db_ses.update_data(result_dct_to_update)
+
+
+    return ls   
 
 # --------------------- Glovo --------------------
 def get_next_categoy_glv(db_path, table_name, table_create_str, pk_column):
