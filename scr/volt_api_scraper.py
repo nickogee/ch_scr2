@@ -166,6 +166,14 @@ class VoltScrapper():
                                     if parent_cat['id'] == parent_category_id:
                                         category_name = format_name(parent_cat['name'])
                         
+                        if not sub_category_name:
+                            sub_category_name = '<empty>'
+                            print(f'Не найдена подкатегория для {title}')
+                        
+                        if not category_name:
+                            category_name = '<empty>'
+                            print(f'Не найдена родительская категория для {title}')
+
                         unformatted_unit_price = prod_dct.get('unformatted_unit_price')
                         if unformatted_unit_price:
                             cost = str(int(unformatted_unit_price.get('price')/100))
