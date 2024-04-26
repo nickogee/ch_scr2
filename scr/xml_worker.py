@@ -94,7 +94,7 @@ def make_data_file():
                 delta = now - timestamp
                 days = delta.days
 
-                if days <= 60:
+                if days <= 7:
                     ln_dct = {DB_ROW_DATA_COLUMNS_LS[i]: dt_line[i] for i in range(0, len(DB_ROW_DATA_COLUMNS_LS))}
                 
                     result.append(ln_dct)
