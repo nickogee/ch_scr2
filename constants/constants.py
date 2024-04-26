@@ -5,6 +5,7 @@ DIR = Path(__file__).resolve().parent.parent
 
 
 MERCANTS = {
+    'mgm_e': 'e9571067-c01c-4bfb-be80-59d060a4715a',
     'mgm': '24c85cdd-cff6-4e60-a32c-e2193d08f964',
     'air': 'edf30565-d0d9-40ec-9759-6fde57220037',
     'glv': 'cef9c961-c2e7-4d8a-9312-4d06b9fe8866',
@@ -76,6 +77,17 @@ DB_ABZ_CATEGORY_CREATE_STR = f'''
 DB_MGM_CATEGORY_TABLE = 'mgm_category'
 DB_MGM_CATEGORY_CREATE_STR = f'''
                         CREATE TABLE IF NOT EXISTS {DB_MGM_CATEGORY_TABLE}( 
+                        parent_id TEXT, 
+                        id TEXT PRIMARY KEY,
+                        name TEXT,
+                        category_lvl TEXT,
+                        scrap_count INTEGER DEFAULT 0
+                        ) 
+                    '''
+
+DB_MGM_E_CATEGORY_TABLE = 'mgm_e_category'
+DB_MGM_E_CATEGORY_CREATE_STR = f'''
+                        CREATE TABLE IF NOT EXISTS {DB_MGM_E_CATEGORY_TABLE}( 
                         parent_id TEXT, 
                         id TEXT PRIMARY KEY,
                         name TEXT,

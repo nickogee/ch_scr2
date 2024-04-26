@@ -5,7 +5,7 @@ URL_TOKEN = 'https://mgo-gw2.e-magnum.kz/auth/server/api/v1/security/guest/login
 PARAMS_TOKEN =  {
   "headers": {
     'user-agent': 'Dart/2.19 (dart:io)',
-    'x-client-version': '4.1.6 (100402) [iOS-16.5]',
+    'x-client-version': '4.2.0 (100448) [iOS-17.4.1]',
     'accept': 'application/json',
     'accept-encoding': 'gzip',
     'content-length': '0',
@@ -20,12 +20,12 @@ PARAMS_TOKEN =  {
 
 ############################### Основной запрос к каталогу
 URL_CATALOG = 'https://mgo-gw1.e-magnum.kz/catalog/client/platformItemV2'
-REQ_LIMIT = 30  # лимит запросов на каждый запуск скрипта
+REQ_LIMIT = 20  # лимит запросов на каждый запуск скрипта
 
 PARAMS_CATALOG = {
     "headers": {
         'user-agent': 'Dart/2.19 (dart:io)',
-        'x-client-version': '4.1.6 (100402) [iOS-16.5]',
+        'x-client-version': '4.2.0 (100448) [iOS-17.4.1]',
         'accept': 'application/json',
         'accept-encoding': 'gzip',
         'Authorization': '',
@@ -34,7 +34,7 @@ PARAMS_CATALOG = {
      },
 
     "params": {
-        'platformId': '5002',
+        'platformId': '5101',
         'categoryIds': '',
         'sortTypeColumn': 'sales',
         'sortOrder': 'DESC',
@@ -53,7 +53,7 @@ URL_CATEGORY = 'https://mgo-gw1.e-magnum.kz/catalog/client/catalog'
 PARAMS_CATEGORY = {
     "headers": {
         'user-agent': 'Dart/2.19 (dart:io)',
-        'x-client-version': '4.1.6 (100402) [iOS-16.5]',
+        'x-client-version': '4.2.0 (100448) [iOS-17.4.1]',
         'accept': 'application/json',
         'accept-encoding': 'gzip',
         'Authorization': '',
@@ -65,7 +65,7 @@ PARAMS_CATEGORY = {
     "params": {
         'includeChildNodes': 'true',
         'parentId': '',
-        'platformId': '5002'
+        'platformId': '5101'
     },
 
     "method": "GET",
