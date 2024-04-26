@@ -157,6 +157,9 @@ class VoltScrapper():
                         else:
                             description = ''
 
+                        category_name = None
+                        sub_category_name = None
+                        
                         for cat in categories:
                             if cat['id'] == prod_dct.get('category'):
                                 sub_category_name = format_name(cat['name'])
@@ -208,7 +211,7 @@ class VoltScrapper():
                         self.rezult.append(l) 
 
                     
-                print(f'Volt -  категория "/{category_name}/" товаров {sku_count}')
+                    print(f'Volt -  категория "/{category_name}/" товаров {sku_count}')
 
         else:
             print('Токен отсутствует')

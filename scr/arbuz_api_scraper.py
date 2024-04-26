@@ -42,8 +42,18 @@ class ArbuzApiScraper():
                     url = url.replace(PAGE, str(page_num))
                     cur_fetch = get_fetch(url, PARAMS)
 
-                sub_category = cur_fetch.json()['data']['name']
-                products = cur_fetch.json()['data']['products']['data']
+                try:
+                    sub_category = cur_fetch.json()['data']['name']
+                except Exception:
+                    print(f'Не удалось получить значение sub_category {page_num} из {page_count}' )
+
+                try:
+                    products = cur_fetch.json()['data']['products']['data']
+                except Exception:
+                    print(f'Не удалось получить значение products {page_num} из {page_count}' )
+                    continue
+
+
                 category_full_path = category + '/' + sub_category
                 print(f'Arbuz - запрос {page_num} из {page_count} по {category_full_path}')
 
@@ -110,6 +120,9 @@ def fast_category_scraper():
     
     # Свежие Овощи и фрукты
     fast_category = '225164'
+   
+    # Молоко, сыр, масло, яйцаx
+    fast_category = '225161'
    
     arbuz = ArbuzApiScraper(fast_category)
     arbuz.start()

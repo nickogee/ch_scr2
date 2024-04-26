@@ -39,8 +39,14 @@ class GlovoApiScraper():
     def fill_rezult(self):
 
         for curr_category in self.categories:
-            category_name = curr_category['data']['title']
-            cat_route = curr_category['data']['action']['data']['path']
+
+            try:
+                category_name = curr_category['data']['title']
+                cat_route = curr_category['data']['action']['data']['path']
+            except Exception:
+                print(f'Не удалось получить category_name или cat_route')
+                continue
+
             response = get_fetch(URL_SERV + cat_route, PARAMS)
             response_data = response.json()['data']
             category_url = response_data['activeElementSlug']
@@ -63,6 +69,16 @@ class GlovoApiScraper():
                     title = title.replace('"', '')
                     title = title.replace("'", '')
                     
+                    data = product.get('data')
+                    if data:
+                        imageUrl = data.get('imageUrl')
+                        if imageUrl:
+                            url_picture = imageUrl
+                        else:
+                            url_picture = ''
+                    else:
+                        url_picture = ''
+
                     l = {
                         'mercant_id': MERCANTS['glv'],
                         'mercant_name': 'glv',
@@ -72,7 +88,7 @@ class GlovoApiScraper():
                         # здесь отсутствует url товара (карточки товара), по этому сюда поместим
                         # url категории (он существует)
                         'url': f'https://glovoapp.com/kz/ru/almaty/glovo-express-ala/?content={category_url}',
-                        'url_picture': product['data']['imageUrl'],
+                        'url_picture': url_picture,
                         'time_scrap': str(datetime.datetime.now().isoformat()),
                         'sub_category': sub_category_name,
                         'category_full_path': category_full_path,
