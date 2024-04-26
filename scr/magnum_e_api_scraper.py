@@ -16,8 +16,7 @@ class Magnum_E_Scrapper():
         self.category_update = []
         self.fast_category_id = fast_category_id
         self.limit_off = bool(fast_category_id)
-        self.token = 'Bearer eyJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI3OTk5Nzc3Nzc3NyIsImF1ZCI6ImNpdHJvLXNlcnZpY2VzIiwic2NvcGUiOlsiNCIsIjgiXSwiaXNzIjoiaHR0cHM6XC9cL2NpdHJvYnl0ZS5jb20iLCJleHAiOjE3MTQxNTk1MTAsInVzZXJJZCI6NjU1MzI0LCJpYXQiOjE3MTQxMjM1MTAsImp0aSI6IjQwZDMwODU1LWI1OTItNDQ1YS05ZjUwLWE4MjMwYzEzYWI2YyJ9.yNase8OIyGWu0rI2yltIp-IzoWwxCbsu7Xjz2zk1mE3B5TmWydnCNAwNqJgyQ7CK8QBwnCwCYBzFGyV_WRYBXuR11ibieCDCxgQbrQbTFeViQwPfdeAtHfmZAbeU8bQ-yxTkTOf24AS4ugpr_KSQZStgFfFfJQjpBEx2nb8N6BIhC-O2o17ltayYt9-jxAy0JXYSBxOgYixnj07Y4471YLaPF_M0d1Ut7sCQ_MOpTEqWHQ4n1b_I0hlh81vtgFHdpxFnwoCJh1xlzn9qjlhvWCZZ24wNjumXWes0azenNOGUQuwLn2XlnjbsVL57BS44GLdJaaEhVWiBkYc3OEtipg'
-        # self.token = None
+        self.token = None
         self.get_token()
         
 

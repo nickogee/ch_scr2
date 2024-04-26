@@ -5,7 +5,7 @@ URL_TOKEN = 'https://mgo-gw2.e-magnum.kz/auth/server/api/v1/security/guest/login
 PARAMS_TOKEN =  {
   "headers": {
     'user-agent': 'Dart/2.19 (dart:io)',
-    'x-client-version': '4.1.6 (100402) [iOS-16.5]',
+    'x-client-version': '4.2.0 (100448) [iOS-17.4.1]',
     'accept': 'application/json',
     'accept-encoding': 'gzip',
     'content-length': '0',
@@ -25,7 +25,7 @@ REQ_LIMIT = 30  # лимит запросов на каждый запуск с�
 PARAMS_CATALOG = {
     "headers": {
         'user-agent': 'Dart/2.19 (dart:io)',
-        'x-client-version': '4.1.6 (100402) [iOS-16.5]',
+        'x-client-version': '4.2.0 (100448) [iOS-17.4.1]',
         'accept': 'application/json',
         'accept-encoding': 'gzip',
         'Authorization': '',
@@ -53,7 +53,7 @@ URL_CATEGORY = 'https://mgo-gw1.e-magnum.kz/catalog/client/catalog'
 PARAMS_CATEGORY = {
     "headers": {
         'user-agent': 'Dart/2.19 (dart:io)',
-        'x-client-version': '4.1.6 (100402) [iOS-16.5]',
+        'x-client-version': '4.2.0 (100448) [iOS-17.4.1]',
         'accept': 'application/json',
         'accept-encoding': 'gzip',
         'Authorization': '',
