@@ -121,9 +121,6 @@ def fast_category_scraper():
     # Свежие Овощи и фрукты
     fast_category = '225164'
    
-    # Молоко, сыр, масло, яйцаx
-    fast_category = '225161'
-   
     arbuz = ArbuzApiScraper(fast_category)
     arbuz.start()
 
