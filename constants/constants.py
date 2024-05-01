@@ -5,7 +5,7 @@ DIR = Path(__file__).resolve().parent.parent
 
 
 MERCANTS = {
-    'mgm_e': 'e9571067-c01c-4bfb-be80-59d060a4715a',
+    'mgm_e': '2d91243f-ceb9-4ada-a19a-ced9bd8a6b5b',
     'mgm': '24c85cdd-cff6-4e60-a32c-e2193d08f964',
     'air': 'edf30565-d0d9-40ec-9759-6fde57220037',
     'glv': 'cef9c961-c2e7-4d8a-9312-4d06b9fe8866',
