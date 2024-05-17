@@ -76,8 +76,17 @@ class GlovoApiScraper():
                             url_picture = imageUrl
                         else:
                             url_picture = ''
+                        
+                        prev_price = data.get('price')
                     else:
                         url_picture = ''
+                        prev_price = 0
+
+                    promotion = data.get('promotion')
+                    if promotion:
+                        price = promotion.get('price')
+                    else:
+                        price = 0
 
                     l = {
                         'mercant_id': MERCANTS['glv'],
@@ -93,8 +102,9 @@ class GlovoApiScraper():
                         'sub_category': sub_category_name,
                         'category_full_path': category_full_path,
                         'brand': '',
-                        'cost': product['data']['price'],
-                        'prev_cost': 0
+                        # 'cost': product['data']['price'],
+                        'cost': price if price else prev_price,
+                        'prev_cost': prev_price if price else 0
                     }
 
                     self.rezult.append(l) 
