@@ -204,7 +204,8 @@ class VoltScrapper():
                         'category_full_path': f'/{category_name}/{sub_category_name}',
                         'brand': '',
                         'cost': cost,
-                        'prev_cost': prev_cost
+                        'prev_cost': prev_cost,
+                        'measure': prod_dct.get('unit_info')
                             }
 
                         sku_count += 1

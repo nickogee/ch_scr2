@@ -104,7 +104,9 @@ class GlovoApiScraper():
                         'brand': '',
                         # 'cost': product['data']['price'],
                         'cost': price if price else prev_price,
-                        'prev_cost': prev_price if price else 0
+                        'prev_cost': prev_price if price else 0,
+                        # здесь отсутствует информация о единицах изменения
+                        'measure': ''
                     }
 
                     self.rezult.append(l) 

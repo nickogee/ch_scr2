@@ -230,7 +230,8 @@ class AirbaScrapper():
                                     'category_full_path': category_full_path,
                                     'brand': brand,
                                     'cost': str(int(prod_dct.get('price_actual'))),
-                                    'prev_cost': str(prev_cost)
+                                    'prev_cost': str(prev_cost),
+                                    'measure': prod_dct.get('unit_measurement')
                                         }
 
                                     self.rezult.append(l) 

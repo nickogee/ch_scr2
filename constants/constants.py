@@ -33,6 +33,7 @@ DB_ROW_DATA_COLUMNS_LS = ['mercant_id',
                           'brand',
                           'sub_category',
                           'time_scrap',
+                          'measure',
                           ]
 
 DB_ROW_DATA_TABLE = 'row_data'
@@ -50,7 +51,8 @@ DB_ROW_DATA_CREATE_STR = f'''
                         category_full_path TEXT, 
                         brand TEXT, 
                         sub_category TEXT, 
-                        time_scrap TEXT
+                        time_scrap TEXT,
+                        measure TEXT
                         )
                     '''
 

@@ -155,6 +155,11 @@ class Magnum_E_Scrapper():
                         else:
                             description = ''
 
+                        measureUnit = prod_dct.get('measureUnit')
+                        if measureUnit:
+                            measure = measureUnit.get('name')
+                        else:
+                            measure = ''
 
                         l = {
                         'mercant_id': MERCANTS['mgm_e'],
@@ -170,7 +175,8 @@ class Magnum_E_Scrapper():
                         'category_full_path': f'{cat_tpl[2]}/{cat_tpl[1]}',
                         'brand': '',
                         'cost': str(int(prod_dct.get('price')/100)),
-                        'prev_cost': str(prev_price)
+                        'prev_cost': str(prev_price),
+                        'measure': measure,
                             }
 
                         self.rezult.append(l) 

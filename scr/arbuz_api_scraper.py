@@ -96,7 +96,8 @@ class ArbuzApiScraper():
                         'category_full_path': category_full_path,
                         'brand': brand,
                         'cost': product['priceActual'],
-                        'prev_cost': product['pricePrevious']
+                        'prev_cost': product['pricePrevious'],
+                        'measure': product['measure'],
                     }
 
                     self.rezult.append(l)
