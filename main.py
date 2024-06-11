@@ -10,7 +10,7 @@ if __name__ == '__main__':
    pass
     # abz.fast_category_scraper()
     
-    # xmlw.make_data_file()
+   #  xmlw.make_data_file()
     
     # glv.fast_category_scraper()
     
