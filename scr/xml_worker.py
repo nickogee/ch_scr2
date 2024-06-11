@@ -77,7 +77,11 @@ def create_xml_str(result: list):
 def datetime_str_to_obj(dt_str):
     dt, _, us = dt_str.partition(".")
     dt = datetime.strptime(dt, "%Y-%m-%dT%H:%M:%S")
-    us = int(us.rstrip("Z"), 10)
+    if not us:
+        us = 0
+    else:
+        us = int(us.rstrip("Z"), 10)
+    
     return dt + timedelta(microseconds=us)
 
 
@@ -102,7 +106,10 @@ def make_data_file():
                 
                     result.append(ln_dct)
 
-            create_xml_str(result)
+            if result:
+                create_xml_str(result)
+            else:
+                print(f'Нет данных в базе для выгрузки в xml, для {key}')
         
 
 
