@@ -7,7 +7,7 @@ from scr.database_worker import upload_to_db, table_exists, get_next_categoy_vlt
 from constants.constants import DB_PATH, DB_VLT_CATEGORY_TABLE, DB_VLT_CATEGORY_CREATE_STR, MERCANTS, \
                                 DB_ROW_DATA_CREATE_STR, DB_ROW_DATA_TABLE, DB_VLT_REFRESH_TOKEN_TABLE, DB_VLT_REFRESH_TOKEN_CREATE_STR
 import random
-
+import json
 
 
 class VoltScrapper():
@@ -76,11 +76,8 @@ class VoltScrapper():
 
                 # для самого верхнего уровня категорий PARENT_ID пустой
                 params_head = PARAMS_CATEGORY.copy()
-                params_head['headers']['Authorization'] = f'Bearer {self.token}'
-                params_head['headers']['userlocationlng'] = self.userlocationlng
-                params_head['headers']['userlocationlat'] = self.userlocationlat
                 
-                resp = get_fetch(url=URL_CATEGORY, params=params_head)
+                resp = get_fetch(url=URL_CATEGORY, params=params_head)               
                 resp_js = resp.json()
                 cetegoly_ls = resp_js.get('categories')
 
@@ -232,11 +229,10 @@ class VoltScrapper():
 
 def fast_category_scraper():
 
-    # Овощи, фрукты, ягоды, зелень, грибы
     fast_category_ls = [
-        '63443f7efed9bfd239e95b31',
-        '64ca2414e3523f7a1e86fbd6'
-    ]
+            '73400dc454444536b021ee99',
+            'fa11fe7023bb4bd8822ec45d',
+        ]
 
     volt = VoltScrapper(fast_category_ls=fast_category_ls)
     volt.start()

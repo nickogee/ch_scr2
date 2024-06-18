@@ -8,17 +8,17 @@
 
 if __name__ == '__main__':
    pass
-    # abz.fast_category_scraper()
+   # abz.fast_category_scraper()
     
    #  xmlw.make_data_file()
     
-    # glv.fast_category_scraper()
+   # glv.fast_category_scraper()
     
-    # mgm.fast_category_scraper()
+   # mgm.fast_category_scraper()
 
-    # mgm_e.main()
+   # mgm_e.main()
     
-    # air.fast_category_scraper()
+   # air.fast_category_scraper()
 
-    # vlt.fast_category_scraper()
+   # vlt.fast_category_scraper()
         
