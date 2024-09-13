@@ -1,4 +1,4 @@
-from scr.arbuz_fetchs import PARAMS, URL_NXT, URL_FST, PAGE, SUB_CATALOG
+from scr.arbuz_fetchs import PARAMS, URL_NXT, URL_FST, PAGE, SUB_CATALOG, LOUNCH_LIMIT
 import datetime
 from scr.share_functions import get_fetch, rand_pause
 from scr.database_worker import upload_to_db, get_next_categoy_abz
@@ -21,6 +21,12 @@ class ArbuzApiScraper():
         fst_fetch = get_fetch(url, PARAMS)
         category = fst_fetch.json()['data']['name']
 
+        try:
+            parent_name = fst_fetch.json()['data']['parent']['data']['name']
+        except Exception:
+            parent_name = '<-- нет родительской категории -->'
+            print(f'Не удалось получить значение родительской категории' )
+        
         sub_catalog_list = [{'id': catalog['id'], 'uri': catalog['uri']}
                             for catalog in fst_fetch.json()['data']['catalogs']['data']]
 
@@ -54,7 +60,7 @@ class ArbuzApiScraper():
                     continue
 
 
-                category_full_path = category + '/' + sub_category
+                category_full_path = parent_name + '/' + category + '/' + sub_category
                 print(f'Arbuz - запрос {page_num} из {page_count} по {category_full_path}')
 
                 for product in products:
@@ -128,10 +134,13 @@ def fast_category_scraper():
 
 def main():
 
-    next_caterory_dct = get_next_categoy_abz(DB_PATH, DB_ABZ_CATEGORY_TABLE, DB_ABZ_CATEGORY_CREATE_STR, 'href')
+    for i in range(LOUNCH_LIMIT):
 
-    arbuz = ArbuzApiScraper(next_caterory_dct['catalog'])
-    arbuz.start()
+        print(f'Запуск #{i + 1}')
+        next_caterory_dct = get_next_categoy_abz(DB_PATH, DB_ABZ_CATEGORY_TABLE, DB_ABZ_CATEGORY_CREATE_STR, 'href')
+
+        arbuz = ArbuzApiScraper(next_caterory_dct['catalog'])
+        arbuz.start()
 
 
 
