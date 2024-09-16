@@ -19,7 +19,11 @@ class ArbuzApiScraper():
 
         url = URL_FST.replace(SUB_CATALOG, self.catalog_number)
         fst_fetch = get_fetch(url, PARAMS)
-        category = fst_fetch.json()['data']['name']
+        try:
+            category = fst_fetch.json()['data']['name']
+        except Exception:
+            parent_name = '<-- нет категории -->'
+            print(f'Не удалось получить значение категории' )
 
         try:
             parent_name = fst_fetch.json()['data']['parent']['data']['name']

@@ -110,7 +110,7 @@ CATEGORIES_ABZ = [
 
 PAGE = '@PAGE@'
 SUB_CATALOG = '@SUBCATALOG@'
-LOUNCH_LIMIT = 4
+LOUNCH_LIMIT = 3
 
 URL_FST = f"https://arbuz.kz/api/v1/shop/catalog/{SUB_CATALOG}?&limit=40&token="
 URL_NXT = f"https://arbuz.kz/api/v1/shop/catalog/{SUB_CATALOG}?page={PAGE}&limit=40&token="
