@@ -130,10 +130,11 @@ class ArbuzApiScraper():
 def fast_category_scraper():
     
     # Свежие Овощи и фрукты
-    fast_category = '225164'
+    fast_category_ls = ['225177', '225178', '225176', '225569', '225562', '225444', '225445', '249886', '225189']
+    for fast_category in fast_category_ls:
    
-    arbuz = ArbuzApiScraper(fast_category)
-    arbuz.start()
+        arbuz = ArbuzApiScraper(fast_category)
+        arbuz.start()
 
 
 def main():

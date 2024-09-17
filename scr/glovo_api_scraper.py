@@ -31,7 +31,7 @@ class GlovoApiScraper():
             else:
                 print('Не найден элемент "body" или не пустой')
         else:
-            print('Не найден элемент "data"')  
+            print(f'Не найден элемент "data" для категории "{cat_dct['title']}" ({cat_dct['slug']})')  
           
 
         # self.categories = self.head_response.json()['data']['body'][0]['data']['elements']
@@ -128,7 +128,7 @@ class GlovoApiScraper():
 def fast_category_scraper():
     
     # Фрукты и Овощи
-    fast_category_dct = {'slug': 'frukty-i-ovoshchi-sc.261845244',
+    fast_category_dct = {'slug': "frukty-i-ovoshchi-sc.295590",
                          'title': 'Фрукты и Овощи'}
 
     glovo = GlovoApiScraper(fast_category_dct)
