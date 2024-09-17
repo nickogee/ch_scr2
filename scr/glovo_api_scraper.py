@@ -31,7 +31,9 @@ class GlovoApiScraper():
             else:
                 print('Не найден элемент "body" или не пустой')
         else:
-            print(f'Не найден элемент "data" для категории "{cat_dct['title']}" ({cat_dct['slug']})')  
+            title = cat_dct['title']
+            slug = cat_dct['slug']
+            print(f'Не найден элемент "data" для категории {title} ({slug})')  
           
 
         # self.categories = self.head_response.json()['data']['body'][0]['data']['elements']
