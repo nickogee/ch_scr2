@@ -64,6 +64,9 @@ def create_xml_str(result: list):
 
         measure = ET.SubElement(offer, 'measure')
         measure.text = offer_dct['measure']
+
+        measure = ET.SubElement(offer, 'city')
+        measure.text = offer_dct['city']
         
 
     tree = ET.ElementTree(yml_catalog)
