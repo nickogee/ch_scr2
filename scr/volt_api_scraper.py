@@ -111,6 +111,7 @@ class VoltScrapper():
     def fill_category_data(self):
         '''Парсит данные по нужным категориям'''
 
+        city = 'almaty'
         if self.token:
 
             self.category_list = get_next_categoy_vlt(db_path=DB_PATH, 
@@ -190,7 +191,7 @@ class VoltScrapper():
                         l = {
                         'mercant_id': MERCANTS['vlt'],
                         'mercant_name': 'vlt',
-                        'product_id': str(prod_dct.get('id')),
+                        'product_id': str(city + '_' + prod_dct.get('id')),
                         'title': title,
                         'description': description,
                         # здесь отсутствует url товара (карточки товара)
@@ -202,7 +203,8 @@ class VoltScrapper():
                         'brand': '',
                         'cost': cost,
                         'prev_cost': prev_cost,
-                        'measure': prod_dct.get('unit_info')
+                        'measure': prod_dct.get('unit_info'),
+                        'city': city,
                             }
 
                         sku_count += 1

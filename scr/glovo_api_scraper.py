@@ -40,6 +40,7 @@ class GlovoApiScraper():
 
     def fill_rezult(self):
 
+        city = 'almaty'
         for curr_category in self.categories:
 
             try:
@@ -93,7 +94,7 @@ class GlovoApiScraper():
                     l = {
                         'mercant_id': MERCANTS['glv'],
                         'mercant_name': 'glv',
-                        'product_id': str(product['data']['id']),
+                        'product_id': str(city + '_' +product['data']['id']),
                         'title': title,
                         'description': '',
                         # здесь отсутствует url товара (карточки товара), по этому сюда поместим
@@ -108,7 +109,8 @@ class GlovoApiScraper():
                         'cost': price if price else prev_price,
                         'prev_cost': prev_price if price else 0,
                         # здесь отсутствует информация о единицах изменения
-                        'measure': ''
+                        'measure': '',
+                        'city': city,
                     }
 
                     self.rezult.append(l) 

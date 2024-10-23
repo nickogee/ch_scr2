@@ -114,6 +114,7 @@ class AirbaScrapper():
     def fill_category_data(self):
         '''Парсит данные по нужным категориям'''
         
+        city = 'almaty'
         self.category_list = get_next_categoy_list_mgm_air(db_path=DB_PATH, 
                             table_name=DB_AIR_CATEGORY_TABLE, mercant='air', cat_lvl='3', fast_category_id=self.fast_category_id)
         
@@ -220,7 +221,7 @@ class AirbaScrapper():
                                     l = {
                                     'mercant_id': MERCANTS['air'],
                                     'mercant_name': 'air',
-                                    'product_id': str(prod_dct.get('id')),
+                                    'product_id': str(city + '_' + prod_dct.get('id')),
                                     'title': title,
                                     'description': description,
                                     'url': '', # здесь отсутствует url товара (карточки товара)
@@ -231,7 +232,8 @@ class AirbaScrapper():
                                     'brand': brand,
                                     'cost': str(int(prod_dct.get('price_actual'))),
                                     'prev_cost': str(prev_cost),
-                                    'measure': prod_dct.get('unit_measurement')
+                                    'measure': prod_dct.get('unit_measurement'),
+                                    'city': city,
                                         }
 
                                     self.rezult.append(l) 

@@ -112,6 +112,7 @@ class MagnumScrapper():
     def fill_category_data(self):
         '''Парсит данные по нужным категориям'''
 
+        city = 'almaty'
         self.category_list = get_next_categoy_list_mgm_air(db_path=DB_PATH, 
                             table_name=DB_MGM_CATEGORY_TABLE, mercant='mgm', cat_lvl='2', fast_category_id=self.fast_category_id)
         
@@ -170,7 +171,7 @@ class MagnumScrapper():
                         l = {
                         'mercant_id': MERCANTS['mgm'],
                         'mercant_name': 'mgm',
-                        'product_id': str(prod_dct.get('itemId')),
+                        'product_id': str(city + '_' + prod_dct.get('itemId')),
                         'title': title,
                         'description': description,
                         # здесь отсутствует url товара (карточки товара)
@@ -183,6 +184,7 @@ class MagnumScrapper():
                         'cost': str(int(prod_dct.get('price')/100)),
                         'prev_cost': str(prev_price),
                         'measure': measure,
+                        'city': city,
                             }
 
                         self.rezult.append(l) 
