@@ -1,6 +1,8 @@
 import sqlite3 
+from copy import deepcopy
 from scr.glovo_fetchs import CATEGORIES_GLV
-from scr.arbuz_fetchs import CATEGORIES_ABZ
+from scr.arbuz_fetchs import CATEGORIES_ABZ, CITY
+from constants.constants import CITYS_LS
 
 
 
@@ -103,9 +105,9 @@ class DBSqlite():
             print('Не удалось выполнить запрос:', sql_txt, f'По причине: {ex}', sep='\n')
             return None
     
-    def get_next_category_abz(self, order_by:str):
+    def get_next_category_abz(self, order_by:str, city:str):
         try:
-            sql_txt = f'''SELECT * FROM {self.table_name} ORDER BY {order_by} LIMIT 1'''
+            sql_txt = f'''SELECT * FROM {self.table_name} WHERE city='{city}' ORDER BY {order_by} LIMIT 1'''
             result = self.cursor.execute(sql_txt).fetchone()
             result_dct = {
                     'title': result[0],
@@ -353,16 +355,20 @@ def get_next_categoy_glv(db_path, table_name, table_create_str, pk_column):
 
 
 # --------------------- Arbuz --------------------
-def get_next_categoy_abz(db_path, table_name, table_create_str, pk_column):
+def get_next_categoy_abz(db_path, table_name, table_create_str, pk_column, city):
     
     db_ses = DBSqlite(db_path, table_name, table_create_str, pk_column)
-    # создадим и заполним таблицу категорий glv, если ее нет
+    # создадим и заполним таблицу категорий abz, если ее нет
     if not db_ses.table_exists():
         db_ses.crate_table()
-        for cat_dict in CATEGORIES_ABZ:
-            db_ses.insert_data(cat_dict)
+        for cur_city in CITYS_LS:
+            copy_cat = deepcopy(CATEGORIES_ABZ)
+            for cat_dict in copy_cat:
+                cat_dict['city'] = cur_city
+                cat_dict['href'] = cat_dict['href'].replace(CITY, cur_city)
+                db_ses.insert_data(cat_dict)
 
-    result_dct = db_ses.get_next_category_abz('scrap_count')
+    result_dct = db_ses.get_next_category_abz(order_by='scrap_count', city=city)
     result_dct_to_update = result_dct.copy()
     result_dct_to_update['scrap_count'] += 1
 

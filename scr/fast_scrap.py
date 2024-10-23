@@ -4,15 +4,24 @@ import scr.magnum_api_scraper as mgm
 import scr.airba_api_scraper as air
 import scr.volt_api_scraper as vlt
 import datetime
+import sys
+from constants.constants import CITYS_LS
 
 
 def run_fast_scrapers():
-
+    
     if datetime.datetime.today().weekday() == 6:
-        try:
-            abz.fast_category_scraper()
-        except Exception as ex:
-            print(ex)
+
+        if len(sys.argv) > 1:
+            city_ls = [sys.argv[1],] 
+        else:
+            city_ls = CITYS_LS[:]
+
+        for cur_city in city_ls:
+            try:
+                abz.fast_category_scraper(city=cur_city)
+            except Exception as ex:
+                print(ex)
         
         try:
             glv.fast_category_scraper()

@@ -1,16 +1,19 @@
-from scr.arbuz_fetchs import PARAMS, URL_NXT, URL_FST, PAGE, SUB_CATALOG, LOUNCH_LIMIT
+from scr.arbuz_fetchs import PARAMS, URL_NXT, URL_FST, PAGE, SUB_CATALOG, LOUNCH_LIMIT, CITY, HREF, FAST_CATEGORIES_ABZ
 import datetime
+import sys
 from scr.share_functions import get_fetch, rand_pause
 from scr.database_worker import upload_to_db, get_next_categoy_abz
 from constants.constants import DB_PATH, DB_ROW_DATA_TABLE, DB_ROW_DATA_CREATE_STR, MERCANTS,\
-                                DB_ABZ_CATEGORY_CREATE_STR, DB_ABZ_CATEGORY_TABLE
+                                DB_ABZ_CATEGORY_CREATE_STR, DB_ABZ_CATEGORY_TABLE, CITYS_LS
 
 
 class ArbuzApiScraper():
 
-    def __init__(self, catalog_number:str):
+    def __init__(self, catalog_number:str, catalog_href:str, city:str):
         self.rezult = []
         self.catalog_number = catalog_number
+        self.catalog_href = catalog_href.replace(CITY, city)
+        self.city = city
         self.df = None
         self.date_time_now = datetime.datetime.now()
 
@@ -18,12 +21,13 @@ class ArbuzApiScraper():
     def fill_rezult(self):
 
         url = URL_FST.replace(SUB_CATALOG, self.catalog_number)
+        PARAMS['headers']['Referer'] = PARAMS['headers']['Referer'].replace(HREF, self.catalog_href)
         fst_fetch = get_fetch(url, PARAMS)
         try:
             category = fst_fetch.json()['data']['name']
         except Exception:
-            parent_name = '<-- нет категории -->'
-            print(f'Не удалось получить значение категории' )
+            category = '<-- нет категории -->'
+            print(f'Не удалось получить значение категории для каталога #{self.catalog_number}' )
 
         try:
             parent_name = fst_fetch.json()['data']['parent']['data']['name']
@@ -65,7 +69,7 @@ class ArbuzApiScraper():
 
 
                 category_full_path = parent_name + '/' + category + '/' + sub_category
-                print(f'Arbuz - запрос {page_num} из {page_count} по {category_full_path}')
+                print(f'Arbuz {self.city} - запрос {page_num} из {page_count} по {category_full_path}')
 
                 for product in products:
 
@@ -96,7 +100,7 @@ class ArbuzApiScraper():
                     l = {
                         'mercant_id': MERCANTS['abz'],
                         'mercant_name': 'abz',
-                        'product_id': str(product['id']),
+                        'product_id': str(self.city + '_' + product['id']),
                         'title':  title,
                         'description': description,
                         'url': f"https://arbuz.kz{product['uri']}",
@@ -108,6 +112,7 @@ class ArbuzApiScraper():
                         'cost': product['priceActual'],
                         'prev_cost': product['pricePrevious'],
                         'measure': product['measure'],
+                        'city': self.city,
                     }
 
                     self.rezult.append(l)
@@ -118,7 +123,7 @@ class ArbuzApiScraper():
             rand_pause()
 
     def __upload_to_db(self):
-        print(f'Arbuz - получено {len(self.rezult)} sku')
+        print(f'Arbuz {self.city} - получено {len(self.rezult)} sku')
         upload_to_db(self.rezult, DB_PATH, DB_ROW_DATA_TABLE, DB_ROW_DATA_CREATE_STR, 'product_id')
 
 
@@ -127,24 +132,30 @@ class ArbuzApiScraper():
         self.__upload_to_db()
 
 
-def fast_category_scraper():
-    
-    # Свежие Овощи и фрукты
-    fast_category_ls = ['225177', '225178', '225176', '225569', '225562', '225444', '225445', '249886', '225189']
-    for fast_category in fast_category_ls:
+def fast_category_scraper(city):
+    print(f'Run for city - {city}')
+    for fast_category in FAST_CATEGORIES_ABZ:
    
-        arbuz = ArbuzApiScraper(fast_category)
+        arbuz = ArbuzApiScraper(catalog_number=fast_category['catalog'], 
+                                catalog_href=fast_category['href'],
+                                city=city)
         arbuz.start()
 
 
 def main():
-
+    city = (sys.argv[1] if len(sys.argv) > 1 else 'astana')
+    print(f'Run for city - {city}')
     for i in range(LOUNCH_LIMIT):
 
         print(f'Запуск #{i + 1}')
-        next_caterory_dct = get_next_categoy_abz(DB_PATH, DB_ABZ_CATEGORY_TABLE, DB_ABZ_CATEGORY_CREATE_STR, 'href')
+        next_caterory_dct = get_next_categoy_abz(db_path=DB_PATH, table_name=DB_ABZ_CATEGORY_TABLE, 
+                                                 table_create_str=DB_ABZ_CATEGORY_CREATE_STR, 
+                                                 pk_column='href', city=city)
 
-        arbuz = ArbuzApiScraper(next_caterory_dct['catalog'])
+        arbuz = ArbuzApiScraper(catalog_number=next_caterory_dct['catalog'], 
+                                catalog_href=next_caterory_dct['href'],
+                                city=city)
+        
         arbuz.start()
 
 

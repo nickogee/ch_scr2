@@ -17,7 +17,7 @@ UPLOAD_FOLDER = f'{DIR}/uploads/'
 
 
 ################################## SQLite ##################################
-
+CITYS_LS = ['almaty', 'astana']
 DB_PATH = f'{DIR}/db/scr_data.db'
 
 DB_ROW_DATA_COLUMNS_LS = ['mercant_id', 
@@ -34,6 +34,7 @@ DB_ROW_DATA_COLUMNS_LS = ['mercant_id',
                           'sub_category',
                           'time_scrap',
                           'measure',
+                          'city',
                           ]
 
 DB_ROW_DATA_TABLE = 'row_data'
@@ -52,7 +53,8 @@ DB_ROW_DATA_CREATE_STR = f'''
                         brand TEXT, 
                         sub_category TEXT, 
                         time_scrap TEXT,
-                        measure TEXT
+                        measure TEXT,
+                        city TEXT
                         )
                     '''
 
@@ -62,7 +64,8 @@ DB_GLV_CATEGORY_CREATE_STR = f'''
                         CREATE TABLE IF NOT EXISTS {DB_GLV_CATEGORY_TABLE}( 
                         title TEXT, 
                         slug TEXT PRIMARY KEY,
-                        scrap_count INTEGER DEFAULT 0
+                        scrap_count INTEGER DEFAULT 0,
+                        city TEXT
                         ) 
                     '''
 
@@ -72,7 +75,8 @@ DB_ABZ_CATEGORY_CREATE_STR = f'''
                         title TEXT, 
                         href TEXT PRIMARY KEY,
                         catalog TEXT,
-                        scrap_count INTEGER DEFAULT 0
+                        scrap_count INTEGER DEFAULT 0,
+                        city TEXT
                         ) 
                     '''
 
@@ -83,7 +87,8 @@ DB_MGM_CATEGORY_CREATE_STR = f'''
                         id TEXT PRIMARY KEY,
                         name TEXT,
                         category_lvl TEXT,
-                        scrap_count INTEGER DEFAULT 0
+                        scrap_count INTEGER DEFAULT 0,
+                        city TEXT
                         ) 
                     '''
 
@@ -94,7 +99,8 @@ DB_MGM_E_CATEGORY_CREATE_STR = f'''
                         id TEXT PRIMARY KEY,
                         name TEXT,
                         category_lvl TEXT,
-                        scrap_count INTEGER DEFAULT 0
+                        scrap_count INTEGER DEFAULT 0,
+                        city TEXT
                         ) 
                     '''
 
@@ -105,7 +111,8 @@ DB_AIR_CATEGORY_CREATE_STR = f'''
                         id TEXT PRIMARY KEY,
                         name TEXT,
                         category_lvl TEXT,
-                        scrap_count INTEGER DEFAULT 0
+                        scrap_count INTEGER DEFAULT 0,
+                        city TEXT
                         ) 
                     '''
 
@@ -114,7 +121,8 @@ DB_VLT_CATEGORY_CREATE_STR = f'''
                         CREATE TABLE IF NOT EXISTS {DB_VLT_CATEGORY_TABLE}(
                         id TEXT PRIMARY KEY,
                         name TEXT,
-                        scrap_count INTEGER DEFAULT 0
+                        scrap_count INTEGER DEFAULT 0,
+                        city TEXT
                         ) 
                     '''
 
