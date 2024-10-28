@@ -28,10 +28,11 @@ def run_fast_scrapers():
         except Exception as ex:
             print(ex)
 
-        try:
-            mgm.fast_category_scraper()
-        except Exception as ex:
-            print(ex)
+        for cur_city in city_ls:
+            try:
+                mgm.fast_category_scraper(city=cur_city)
+            except Exception as ex:
+                print(ex)
             
         try:
             air.fast_category_scraper()

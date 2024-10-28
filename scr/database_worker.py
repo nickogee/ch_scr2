@@ -9,13 +9,14 @@ from constants.constants import CITYS_LS
 
 class DBSqlite():
     
-    def __init__(self, db_path, table_name, table_create_str, pk_column) -> None:
+    def __init__(self, db_path, table_name, table_create_str, pk_column, city='') -> None:
         conn = sqlite3.connect(db_path)
         self.connect = conn 
         self.cursor = conn.cursor()
         self.table_name = table_name
         self.table_create_str = table_create_str
         self.pk_column = pk_column
+        self.city = city
 
     def table_exists(self): 
 
@@ -207,6 +208,50 @@ class DBSqlite():
                     ORDER BY mc.scrap_count    
                     '''
 
+        elif mercant == 'mgm':
+            
+            # Получим список из id категорий last_lvl + 1 уровня, 
+            # у которых parent_id имеет имнимальное значение scrap_count из всех категорий last_lvl уровня.
+            # (для "быстрого парсера" по нужной категории)
+            # Отсортируем их по возростанию scrap_count, чтобы первыми соберать самые "давние" подкатегории 
+
+            if fast_category_id:
+                fast_category_str = f"AND mc.id = '{fast_category_id}'"
+            else:
+                fast_category_str = ''
+            
+            sql_txt = f'''
+                    SELECT
+                        lvl.id as id,
+                        lvl.name as name,
+                        lvl_2.name as parent_name,
+                        lvl_3.name as head_parent_name,
+                        lvl.scrap_count as scrap_count,
+                        lvl_2.scrap_count as scrap_count_parent,
+                        lvl_2.id as parent1_id,
+                        lvl_3.id as parent2_id,
+                        lvl_3.parent_id as parent3_id,
+                        lvl_3.city as city
+                    FROM 
+                        {mercant}_category as lvl
+                    INNER JOIN {mercant}_category as lvl_2 
+                    ON lvl.parent_id = lvl_2.id
+                    INNER JOIN {mercant}_category as lvl_3 
+                    ON lvl_2.parent_id = lvl_3.id
+                    WHERE lvl.parent_id IN 
+                        (SELECT 
+                            mc.id
+                        FROM {mercant}_category mc
+                        WHERE mc.category_lvl = '{last_lvl}' AND city = '{self.city}' {fast_category_str}
+                        ORDER BY mc.scrap_count 
+                        LIMIT 2
+                        )
+                        AND lvl.city = '{self.city}'
+                        AND lvl_2.city = '{self.city}'
+                        AND lvl_3.city = '{self.city}'
+                    ORDER BY lvl.scrap_count   
+                    '''
+
         else:
             
             # Получим список из id категорий last_lvl + 1 уровня, 
@@ -257,12 +302,29 @@ class DBSqlite():
 
     def get_data(self, columns: str, filter_tpl: tuple):
 
-        try:
+
+        if isinstance(filter_tpl, tuple):    
             if filter_tpl:
                 sql_txt = f'''SELECT {columns} FROM {self.table_name} WHERE {filter_tpl[0]} = {"'" + filter_tpl[1] + "'"}'''
             else:
                 sql_txt = f'''SELECT {columns} FROM {self.table_name}'''
+       
+        elif isinstance(filter_tpl, list):
+            if filter_tpl:
+                where_con = ''
+                for cur_tpl in filter_tpl:
+                    where_con += f"{cur_tpl[0]} = '{cur_tpl[1]}' AND "
+                else:
+                    where_con = where_con[: len(where_con) - 5]
+                
+                sql_txt = f'''SELECT {columns} FROM {self.table_name} WHERE {where_con}'''
+            
+            else:
+                sql_txt = f'''SELECT {columns} FROM {self.table_name}'''
 
+
+        
+        try:
             result = self.cursor.execute(sql_txt)
             return result
         except Exception as ex:
@@ -377,10 +439,10 @@ def get_next_categoy_abz(db_path, table_name, table_create_str, pk_column, city)
             
 
 # --------------------- Magnum + Airba --------------------
-def get_next_categoy_list_mgm_air(db_path, table_name, mercant:str, cat_lvl:str, fast_category_id):
+def get_next_categoy_list_mgm_air(db_path, table_name, mercant:str, cat_lvl:str, fast_category_id, city=''):
     '''получает список категорий 3-го уровня, по которым нужно соберать данные'''
 
-    db_ses = DBSqlite(db_path, table_name, '', '') 
+    db_ses = DBSqlite(db_path=db_path, table_name=table_name, table_create_str='', pk_column='', city=city) 
     # result_ls = db_ses.get_next_category_list_mgm_air(mercant, cat_lvl)
     result_ls = db_ses.get_category_list_mgm_air(mercant, cat_lvl, fast_category_id)
     return result_ls
@@ -403,6 +465,23 @@ def update_parent_category_mgm_air(db_path, table_name, pk_column, filter_tpl):
                 }
     
     db_ses.update_data(cat_dct)
+
+def update_parent_category_mgm(db_path, table_name, pk_column, filter_ls): 
+    
+    columns = 'scrap_count'
+    db_ses = DBSqlite(db_path, table_name, None, pk_column)
+    result_ls = db_ses.get_data(columns=columns, filter_tpl=filter_ls).fetchall()
+    sc_ls = [i[0] for i in result_ls]
+    sc_min = min(sc_ls)
+
+    cat_dct =   {
+            'id': filter_ls[0][1],
+            'city': filter_ls[1][1],
+            'scrap_count': sc_min 
+                }
+    
+    db_ses.update_data(cat_dct)
+
 
 # --------------------- XML --------------------
 def read_mercant_data(db_path, table_name, columns, filter_tpl):

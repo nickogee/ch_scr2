@@ -1,4 +1,4 @@
-import scr.arbuz_api_scraper as abz
+# import scr.arbuz_api_scraper as abz
 # import scr.xml_worker as xmlw
 # import scr.glovo_api_scraper as glv
 # import scr.magnum_api_scraper as mgm
@@ -9,9 +9,9 @@ import scr.arbuz_api_scraper as abz
 # print(sys.argv[0])
 
 if __name__ == '__main__':
-   # pass
+   pass
    # abz.fast_category_scraper(sys.argv)
-   abz.main()
+   # abz.main()
     
    #  xmlw.make_data_file()
     
@@ -19,6 +19,7 @@ if __name__ == '__main__':
    # glv.main()
     
    # mgm.fast_category_scraper()
+   # mgm.main()
 
    # mgm_e.main()
     

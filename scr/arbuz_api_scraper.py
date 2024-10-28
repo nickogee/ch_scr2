@@ -143,7 +143,7 @@ def fast_category_scraper(city):
 
 
 def main():
-    city = (sys.argv[1] if len(sys.argv) > 1 else 'astana')
+    city = (sys.argv[1] if len(sys.argv) > 1 else 'almaty')
     print(f'Run for city - {city}')
     for i in range(LOUNCH_LIMIT):
 

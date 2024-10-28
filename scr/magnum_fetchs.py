@@ -71,3 +71,9 @@ PARAMS_CATEGORY = {
     "method": "GET",
     "body": ""
 }
+
+CITYS_PLATFORM_ID = {'almaty': '5002',
+                    'astana': '6002',
+                    # 'shymkent': '7001'
+                    }
+    

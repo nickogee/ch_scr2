@@ -18,6 +18,7 @@ UPLOAD_FOLDER = f'{DIR}/uploads/'
 
 ################################## SQLite ##################################
 CITYS_LS = ['almaty', 'astana']
+
 DB_PATH = f'{DIR}/db/scr_data.db'
 
 DB_ROW_DATA_COLUMNS_LS = ['mercant_id', 
@@ -84,11 +85,12 @@ DB_MGM_CATEGORY_TABLE = 'mgm_category'
 DB_MGM_CATEGORY_CREATE_STR = f'''
                         CREATE TABLE IF NOT EXISTS {DB_MGM_CATEGORY_TABLE}( 
                         parent_id TEXT, 
-                        id TEXT PRIMARY KEY,
+                        id TEXT,
                         name TEXT,
                         category_lvl TEXT,
                         scrap_count INTEGER DEFAULT 0,
-                        city TEXT
+                        city TEXT,
+                        key_column TEXT PRIMARY KEY
                         ) 
                     '''
 
