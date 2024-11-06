@@ -182,7 +182,27 @@ class DBSqlite():
         except Exception as ex:
             print('Не удалось выполнить запрос:', sql_txt, f'По причине: {ex}', sep='\n')
             return None
+
+    def get_next_category_kvr(self, order_by:str, fast_category_id):
         
+        if fast_category_id:
+            condition = f"WHERE id = '{fast_category_id}' AND city = '{self.city}'"
+        else:
+            condition = f"WHERE city = '{self.city}'"
+           
+
+        try:
+            sql_txt = f'''SELECT * FROM {self.table_name} {condition} ORDER BY {order_by} LIMIT 1'''
+            result = self.cursor.execute(sql_txt).fetchone()
+            result_dct = {
+                    'id': result[0],
+                    'name': result[1],
+                    'scrap_count': result[2],
+                    }
+            return result_dct
+        except Exception as ex:
+            print('Не удалось выполнить запрос:', sql_txt, f'По причине: {ex}', sep='\n')
+            return None    
 
     def get_category_list_mgm_air(self, mercant:str, last_lvl:str, fast_category_id):
 
@@ -374,6 +394,31 @@ def create_table(db_path, table_name, table_create_str):
     db_ses.crate_table()
 
 
+# --------------------- Klever --------------------
+def get_next_categoy_kvr(db_path, table_name, pk_column, fast_category_ls, city):
+    
+    db_ses = DBSqlite(db_path=db_path, table_name=table_name, table_create_str=None, pk_column=pk_column, city=city)
+    ls = []
+    if fast_category_ls:
+        for current_cat in fast_category_ls:
+            result_dct = db_ses.get_next_category_kvr(order_by='scrap_count', fast_category_id=current_cat)
+            if result_dct:
+                ls.append(result_dct)
+
+                result_dct_to_update = result_dct.copy()
+                result_dct_to_update['scrap_count'] += 1
+                db_ses.update_data(result_dct_to_update)
+    else:
+        result_dct = db_ses.get_next_category_kvr(order_by='scrap_count', fast_category_id=None)
+        if result_dct:
+            ls.append(result_dct)
+
+            result_dct_to_update = result_dct.copy()
+            result_dct_to_update['scrap_count'] += 1
+            db_ses.update_data(result_dct_to_update)
+
+    return ls   
+
 # --------------------- Volt --------------------
 def get_next_categoy_vlt(db_path, table_name, pk_column, fast_category_ls):
     
@@ -442,7 +487,7 @@ def get_next_categoy_abz(db_path, table_name, table_create_str, pk_column, city)
 def get_next_categoy_list_mgm_air(db_path, table_name, mercant:str, cat_lvl:str, fast_category_id, city=''):
     '''получает список категорий 3-го уровня, по которым нужно соберать данные'''
 
-    db_ses = DBSqlite(db_path=db_path, table_name=table_name, table_create_str='', pk_column='', city=city) 
+    db_ses = DBSqlite(db_path=db_path, table_name=table_name, table_create_str='', pk_column='key_column', city=city) 
     # result_ls = db_ses.get_next_category_list_mgm_air(mercant, cat_lvl)
     result_ls = db_ses.get_category_list_mgm_air(mercant, cat_lvl, fast_category_id)
     return result_ls

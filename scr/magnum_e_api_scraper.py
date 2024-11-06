@@ -5,7 +5,7 @@ from scr.share_functions import get_fetch, rand_pause
 from scr.database_worker import upload_to_db, table_exists, get_next_categoy_list_mgm_air, \
                                 update_category_mgm_air, update_parent_category_mgm_air
 from constants.constants import DB_PATH, DB_MGM_E_CATEGORY_TABLE, DB_MGM_E_CATEGORY_CREATE_STR, MERCANTS, \
-                                DB_ROW_DATA_CREATE_STR, DB_ROW_DATA_TABLE
+                                DB_ROW_DATA_CREATE_STR, DB_ROW_DATA_TABLE, CITY_POSTFIX
 
 
 class Magnum_E_Scrapper():
@@ -17,6 +17,7 @@ class Magnum_E_Scrapper():
         self.fast_category_id = fast_category_id
         self.limit_off = bool(fast_category_id)
         self.token = None
+        self.city = 'almaty'
         self.get_token()
         
 
@@ -108,7 +109,6 @@ class Magnum_E_Scrapper():
     def fill_category_data(self):
         '''Парсит данные по нужным категориям'''
 
-        city = 'almaty'
         self.category_list = get_next_categoy_list_mgm_air(db_path=DB_PATH, 
                             table_name=DB_MGM_E_CATEGORY_TABLE, mercant='mgm_e', cat_lvl='2', fast_category_id=self.fast_category_id)
         
@@ -162,10 +162,13 @@ class Magnum_E_Scrapper():
                         else:
                             measure = ''
 
+                        mercant_short_name = 'mgm_e' + '-' + CITY_POSTFIX[self.city]
+
                         l = {
-                        'mercant_id': MERCANTS['mgm_e'],
-                        'mercant_name': 'mgm_e',
-                        'product_id': str(city + '_' + prod_dct.get('itemId')),
+                        'mercant_id': MERCANTS[mercant_short_name],
+                        'mercant_name': mercant_short_name,
+                        'product_id': str(self.city + '_' + str(prod_dct.get('itemId'))),
+                        'id': str(prod_dct.get('itemId')),
                         'title': title,
                         'description': description,
                         # здесь отсутствует url товара (карточки товара)
@@ -178,7 +181,7 @@ class Magnum_E_Scrapper():
                         'cost': str(int(prod_dct.get('price')/100)),
                         'prev_cost': str(prev_price),
                         'measure': measure,
-                        'city': city,
+                        'city': self.city,
                             }
 
                         self.rezult.append(l) 
@@ -192,7 +195,7 @@ class Magnum_E_Scrapper():
 
                     break
                 
-                print(f'Magnum express - страница {page + 1} категории "{cat_tpl[2]}/{cat_tpl[1]}" запрос {req_cnt}')
+                print(f'Magnum express {self.city} - страница {page + 1} категории "{cat_tpl[2]}/{cat_tpl[1]}" запрос {req_cnt}')
                 rand_pause()
 
     def __upload_to_db(self):

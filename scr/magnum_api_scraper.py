@@ -6,7 +6,7 @@ from scr.share_functions import get_fetch, rand_pause
 from scr.database_worker import upload_to_db, table_exists, get_next_categoy_list_mgm_air, \
                                 update_category_mgm_air, update_parent_category_mgm
 from constants.constants import DB_PATH, DB_MGM_CATEGORY_TABLE, DB_MGM_CATEGORY_CREATE_STR, MERCANTS, \
-                                DB_ROW_DATA_CREATE_STR, DB_ROW_DATA_TABLE
+                                DB_ROW_DATA_CREATE_STR, DB_ROW_DATA_TABLE, CITY_POSTFIX
 
 
 class MagnumScrapper():
@@ -183,11 +183,13 @@ class MagnumScrapper():
                         else:
                             measure = ''
 
-                            
+                        mercant_short_name = 'mgm' + '-' + CITY_POSTFIX[self.city]
+   
                         l = {
-                        'mercant_id': MERCANTS['mgm'],
-                        'mercant_name': 'mgm',
+                        'mercant_id': MERCANTS[mercant_short_name],
+                        'mercant_name': mercant_short_name,
                         'product_id': str(self.city + '_' + str(prod_dct.get('itemId'))),
+                        'id': str(prod_dct.get('itemId')),
                         'title': title,
                         'description': description,
                         # здесь отсутствует url товара (карточки товара)
@@ -215,7 +217,7 @@ class MagnumScrapper():
 
                     break
                 
-                print(f'Magnum - страница {page + 1} категории "{cat_tpl[3]}/{cat_tpl[2]}/{cat_tpl[1]}" запрос {req_cnt}')
+                print(f'Magnum {self.city} - страница {page + 1} категории "{cat_tpl[3]}/{cat_tpl[2]}/{cat_tpl[1]}" запрос {req_cnt}')
                 rand_pause()
 
     def __upload_to_db(self):
@@ -259,7 +261,7 @@ def fast_category_scraper(city):
 
 
 def main():
-    city = (sys.argv[1] if len(sys.argv) > 1 else 'astana')
+    city = (sys.argv[1] if len(sys.argv) > 1 else 'almaty')
     print(f'Run for city - {city}')
     magnum = MagnumScrapper(city=city)
     magnum.start()

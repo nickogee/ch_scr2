@@ -27,7 +27,8 @@ def create_xml_str(result: list):
 
     for offer_dct in result:
         # 4 lvl
-        offer = ET.SubElement(offers, 'offer', {'id': offer_dct['product_id']})
+        # offer = ET.SubElement(offers, 'offer', {'id': offer_dct['product_id']})
+        offer = ET.SubElement(offers, 'offer', {'id': offer_dct['id']})
 
         # 5 lvl
         name = ET.SubElement(offer, 'name')
@@ -99,7 +100,7 @@ def make_data_file():
 
             result = []
             for dt_line in db_result:
-                timestamp = datetime_str_to_obj(dt_line[12])
+                timestamp = datetime_str_to_obj(dt_line[13])
                 now = datetime.now()
                 delta = now - timestamp
                 days = delta.days

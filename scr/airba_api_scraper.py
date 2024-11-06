@@ -5,7 +5,7 @@ from scr.share_functions import get_fetch, rand_pause
 from scr.database_worker import upload_to_db, table_exists, get_next_categoy_list_mgm_air, \
                                 update_category_mgm_air, update_parent_category_mgm_air
 from constants.constants import DB_PATH, DB_AIR_CATEGORY_TABLE, DB_AIR_CATEGORY_CREATE_STR, MERCANTS, \
-                                DB_ROW_DATA_CREATE_STR, DB_ROW_DATA_TABLE
+                                DB_ROW_DATA_CREATE_STR, DB_ROW_DATA_TABLE, CITY_POSTFIX
 
 
 class AirbaScrapper():
@@ -17,6 +17,7 @@ class AirbaScrapper():
         self.fast_category_id = fast_category_id
         self.limit_off = bool(fast_category_id)
         self.workflow = WORKFLOW
+        self.city = 'almaty'
     
     def fill_category_table(self):
         '''Создает и перезаполняет актуальными данными таблицу категорий, если она не существует'''
@@ -114,7 +115,6 @@ class AirbaScrapper():
     def fill_category_data(self):
         '''Парсит данные по нужным категориям'''
         
-        city = 'almaty'
         self.category_list = get_next_categoy_list_mgm_air(db_path=DB_PATH, 
                             table_name=DB_AIR_CATEGORY_TABLE, mercant='air', cat_lvl='3', fast_category_id=self.fast_category_id)
         
@@ -217,11 +217,13 @@ class AirbaScrapper():
                                     else:
                                         brand = ''
 
+                                    mercant_short_name = 'air' + '-' + CITY_POSTFIX[self.city]
 
                                     l = {
-                                    'mercant_id': MERCANTS['air'],
-                                    'mercant_name': 'air',
-                                    'product_id': str(city + '_' + prod_dct.get('id')),
+                                    'mercant_id': MERCANTS[mercant_short_name],
+                                    'mercant_name': mercant_short_name,
+                                    'product_id': str(self.city + '_' + str(prod_dct.get('id'))),
+                                    'id': str(prod_dct.get('id')),
                                     'title': title,
                                     'description': description,
                                     'url': '', # здесь отсутствует url товара (карточки товара)
@@ -233,7 +235,7 @@ class AirbaScrapper():
                                     'cost': str(int(prod_dct.get('price_actual'))),
                                     'prev_cost': str(prev_cost),
                                     'measure': prod_dct.get('unit_measurement'),
-                                    'city': city,
+                                    'city': self.city,
                                         }
 
                                     self.rezult.append(l) 

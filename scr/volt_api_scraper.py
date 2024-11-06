@@ -4,7 +4,7 @@ import datetime
 from scr.share_functions import get_fetch, format_name
 from scr.database_worker import upload_to_db, table_exists, get_next_categoy_vlt, \
                                 get_data_from, truncate_table, create_table
-from constants.constants import DB_PATH, DB_VLT_CATEGORY_TABLE, DB_VLT_CATEGORY_CREATE_STR, MERCANTS, \
+from constants.constants import DB_PATH, DB_VLT_CATEGORY_TABLE, DB_VLT_CATEGORY_CREATE_STR, MERCANTS, CITY_POSTFIX,\
                                 DB_ROW_DATA_CREATE_STR, DB_ROW_DATA_TABLE, DB_VLT_REFRESH_TOKEN_TABLE, DB_VLT_REFRESH_TOKEN_CREATE_STR
 import random
 import json
@@ -21,6 +21,7 @@ class VoltScrapper():
         self.userlocationlng = f'76.{str(random.randint(889433, 960513))}'
         self.userlocationlat = f'43.2{str(random.randint(32015, 49646))}'
         self.token = None
+        self.city = 'almaty'
         self.create_refresh_token_table()
         # self.get_token()
         
@@ -111,7 +112,6 @@ class VoltScrapper():
     def fill_category_data(self):
         '''Парсит данные по нужным категориям'''
 
-        city = 'almaty'
         if self.token:
 
             self.category_list = get_next_categoy_vlt(db_path=DB_PATH, 
@@ -188,10 +188,13 @@ class VoltScrapper():
                             cost = str(int(prod_dct.get('baseprice')/100)) 
                             prev_cost = '0'
                         
+                        mercant_short_name = 'vlt' + '-' + CITY_POSTFIX[self.city]
+
                         l = {
-                        'mercant_id': MERCANTS['vlt'],
-                        'mercant_name': 'vlt',
-                        'product_id': str(city + '_' + prod_dct.get('id')),
+                        'mercant_id': MERCANTS[mercant_short_name],
+                        'mercant_name': mercant_short_name,
+                        'product_id': str(self.city + '_' + str(prod_dct.get('id'))),
+                        'id': str(prod_dct.get('id')),
                         'title': title,
                         'description': description,
                         # здесь отсутствует url товара (карточки товара)
@@ -204,14 +207,14 @@ class VoltScrapper():
                         'cost': cost,
                         'prev_cost': prev_cost,
                         'measure': prod_dct.get('unit_info'),
-                        'city': city,
+                        'city': self.city,
                             }
 
                         sku_count += 1
                         self.rezult.append(l) 
 
                     
-                    print(f'Volt -  категория "/{category_name}/" товаров {sku_count}')
+                    print(f'Volt {self.city} -  категория "/{category_name}/" товаров {sku_count}')
 
         else:
             print('Токен отсутствует')
@@ -219,7 +222,7 @@ class VoltScrapper():
     def __upload_to_db(self):
         
         # грузим "спарсенные" данные в базу
-        print(f'Volt - получено {len(self.rezult)} sku')
+        print(f'Volt {self.city} - получено {len(self.rezult)} sku')
         upload_to_db(self.rezult, DB_PATH, DB_ROW_DATA_TABLE, DB_ROW_DATA_CREATE_STR, 'product_id')
 
 

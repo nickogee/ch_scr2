@@ -4,7 +4,7 @@ import sys
 from scr.share_functions import get_fetch, rand_pause
 from scr.database_worker import upload_to_db, get_next_categoy_abz
 from constants.constants import DB_PATH, DB_ROW_DATA_TABLE, DB_ROW_DATA_CREATE_STR, MERCANTS,\
-                                DB_ABZ_CATEGORY_CREATE_STR, DB_ABZ_CATEGORY_TABLE, CITYS_LS
+                                DB_ABZ_CATEGORY_CREATE_STR, DB_ABZ_CATEGORY_TABLE, CITY_POSTFIX
 
 
 class ArbuzApiScraper():
@@ -97,10 +97,13 @@ class ArbuzApiScraper():
                     else:
                         brand = ''
 
+                    mercant_short_name = 'abz' + '-' + CITY_POSTFIX[self.city]
+
                     l = {
-                        'mercant_id': MERCANTS['abz'],
-                        'mercant_name': 'abz',
+                        'mercant_id': MERCANTS[mercant_short_name],
+                        'mercant_name': mercant_short_name,
                         'product_id': str(self.city + '_' + product['id']),
+                        'id': str(product['id']),
                         'title':  title,
                         'description': description,
                         'url': f"https://arbuz.kz{product['uri']}",

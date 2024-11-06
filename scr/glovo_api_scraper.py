@@ -3,7 +3,7 @@ import datetime
 from scr.share_functions import get_fetch, rand_pause
 from scr.database_worker import upload_to_db, get_next_categoy_glv
 from constants.constants import DB_PATH, DB_ROW_DATA_TABLE, DB_ROW_DATA_CREATE_STR, MERCANTS,\
-                                        DB_GLV_CATEGORY_TABLE, DB_GLV_CATEGORY_CREATE_STR
+                                        DB_GLV_CATEGORY_TABLE, DB_GLV_CATEGORY_CREATE_STR, CITY_POSTFIX
                                     
 
 
@@ -15,7 +15,7 @@ class GlovoApiScraper():
         self.df = None
         self.date_time_now = datetime.datetime.now()
         self.head_response = get_fetch(URL_FST.replace(SLUG, cat_dct['slug']), PARAMS)
-        
+        self.city = 'almaty'
         self.categories = []
         head_resp_json = self.head_response.json()
         data = head_resp_json.get('data')
@@ -40,7 +40,6 @@ class GlovoApiScraper():
 
     def fill_rezult(self):
 
-        city = 'almaty'
         for curr_category in self.categories:
 
             try:
@@ -91,10 +90,13 @@ class GlovoApiScraper():
                     else:
                         price = 0
 
+                    mercant_short_name = 'glv' + '-' + CITY_POSTFIX[self.city]
+
                     l = {
-                        'mercant_id': MERCANTS['glv'],
-                        'mercant_name': 'glv',
-                        'product_id': str(city + '_' +product['data']['id']),
+                        'mercant_id': MERCANTS[mercant_short_name],
+                        'mercant_name': mercant_short_name,
+                        'product_id': str(self.city + '_' + str(product['data']['id'])),
+                        'id': str(product['data']['id']),
                         'title': title,
                         'description': '',
                         # здесь отсутствует url товара (карточки товара), по этому сюда поместим
@@ -110,7 +112,7 @@ class GlovoApiScraper():
                         'prev_cost': prev_price if price else 0,
                         # здесь отсутствует информация о единицах изменения
                         'measure': '',
-                        'city': city,
+                        'city': self.city,
                     }
 
                     self.rezult.append(l) 
@@ -121,7 +123,7 @@ class GlovoApiScraper():
             
 
     def __upload_to_db(self):
-        print(f'Glovo - получено {len(self.rezult)} sku')
+        print(f'Glovo {self.city} - получено {len(self.rezult)} sku')
         upload_to_db(self.rezult, DB_PATH, DB_ROW_DATA_TABLE, DB_ROW_DATA_CREATE_STR, 'product_id')
 
     def start(self):

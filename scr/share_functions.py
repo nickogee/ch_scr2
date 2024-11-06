@@ -31,6 +31,7 @@ def get_fetch(url, params):
 
 def rand_pause(add_sec = 0):
         time.sleep(15 + random.randint(-10, 15) + add_sec)
+        # time.sleep(5 + random.randint(0, 5) + add_sec)
 
 
 def format_name(raw_name:str):
