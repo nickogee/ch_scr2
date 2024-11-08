@@ -522,6 +522,7 @@ def update_parent_category_mgm(db_path, table_name, pk_column, filter_ls):
     cat_dct =   {
             'id': filter_ls[0][1],
             'city': filter_ls[1][1],
+            pk_column: filter_ls[1][1] + '/' + filter_ls[0][1],
             'scrap_count': sc_min 
                 }
     

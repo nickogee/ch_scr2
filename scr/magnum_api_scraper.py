@@ -63,7 +63,7 @@ class MagnumScrapper():
                         'key_column': cur_city + '/' + str(head_dct['id']),
                     }
 
-                    print(f"Получаем категорию city= {cur_city} id={head_dct['id']}, name={head_dct['name']}")
+                    print(f"Получаем категорию 1 уровня city= {cur_city} id={head_dct['id']}, name={head_dct['name']}")
                     self.category_list.append(dct)
 
                     chld_ls = head_dct.get('childCategories')
@@ -80,7 +80,7 @@ class MagnumScrapper():
                             'key_column': cur_city + '/' + str(chld_dct['id']),
                                     }
                             
-                            print(f"Получаем категорию city= {cur_city} id={chld_dct['id']}, name={chld_dct['name']}")
+                            print(f"Получаем категорию 2 уровня city= {cur_city} id={chld_dct['id']}, name={chld_dct['name']}")
                             self.category_list.append(dct)
 
                             rand_pause()
@@ -110,7 +110,7 @@ class MagnumScrapper():
                                         'key_column': cur_city + '/' + str(sub_chld_dct['id']),
                                                 }
 
-                                        print(f"Получаем категорию city={cur_city} id={sub_chld_dct['id']}, name={sub_chld_dct['name']}")
+                                        print(f"Получаем категорию 3 уровня city={cur_city} id={sub_chld_dct['id']}, name={sub_chld_dct['name']}")
                                         self.category_list.append(dct)
 
             if self.category_list:
@@ -234,14 +234,14 @@ class MagnumScrapper():
         parent_set = {i[6] for i in self.category_list}
         for par_id in parent_set:
             filter_ls = [('parent_id', par_id), ('city', self.city)]
-            update_parent_category_mgm(db_path=DB_PATH, table_name=DB_MGM_CATEGORY_TABLE, pk_column='id', filter_ls=filter_ls)
+            update_parent_category_mgm(db_path=DB_PATH, table_name=DB_MGM_CATEGORY_TABLE, pk_column='key_column', filter_ls=filter_ls)
 
         # после того как обновили scrap_count для категорий 2-го уровня,
         # обновим scrap_count для родительской категории (1-го уровня) - возьмем наименьшее scrap_count среди дочерних категорий
         parent_set = {i[7] for i in self.category_list}
         for par_id in parent_set:
             filter_ls = [('parent_id', par_id), ('city', self.city)]
-            update_parent_category_mgm(db_path=DB_PATH, table_name=DB_MGM_CATEGORY_TABLE, pk_column='id', filter_ls=filter_ls)
+            update_parent_category_mgm(db_path=DB_PATH, table_name=DB_MGM_CATEGORY_TABLE, pk_column='key_column', filter_ls=filter_ls)
 
 
 
@@ -261,7 +261,8 @@ def fast_category_scraper(city):
 
 
 def main():
-    city = (sys.argv[1] if len(sys.argv) > 1 else 'almaty')
+    # city = (sys.argv[1] if len(sys.argv) > 1 else 'almaty')
+    city = (sys.argv[1] if len(sys.argv) > 1 else 'astana')
     print(f'Run for city - {city}')
     magnum = MagnumScrapper(city=city)
     magnum.start()
