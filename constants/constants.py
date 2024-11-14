@@ -6,13 +6,13 @@ DIR = Path(__file__).resolve().parent.parent
 MERCANTS = {
     'mgm_e-ala': '2d91243f-ceb9-4ada-a19a-ced9bd8a6b5b',
     'mgm-ala': '24c85cdd-cff6-4e60-a32c-e2193d08f964',
-    'mgm-ast': 'b31f8fcd-a429-41a0-aa15-c96e3bfdc694',
+    'mgm-ast': '8ee8ee38-5732-411b-9e62-228303a8de6f',
     'air-ala': 'edf30565-d0d9-40ec-9759-6fde57220037',
     'glv-ala': 'cef9c961-c2e7-4d8a-9312-4d06b9fe8866',
     'abz-ala': '8bfdb88d-c8cc-4c2f-a363-e545296066b8',
-    'abz-ast': 'a1eadc90-0af5-4a86-bf54-62d9a0520cd6',
+    'abz-ast': 'e6af75c8-3f21-4bd0-8e74-184451d2ce26',
     'vlt-ala': '70e6a58b-bf0a-4d53-b2b8-af4e0399047f',
-    'kvr-ast': '069b3cf3-17db-436c-99a7-d634767d83bf',
+    'kvr-ast': '0b05ce6b-e701-4938-996b-726dbc541ebc',
 }
 
 CITY_POSTFIX = {
