@@ -6,6 +6,7 @@
 # import scr.airba_api_scraper as air
 # import scr.volt_api_scraper as vlt
 # import scr.klever_api_scraper as kvr
+import scr.lavka_api_scraper as lvk
 # import sys
 # print(sys.argv[0])
 
@@ -53,4 +54,10 @@ if __name__ == '__main__':
    # except Exception as ex:
    #    print(ex)
    # vlt.fast_category_scraper()
+
+   try:
+      lvk.main()
+   except Exception as ex:
+      print(ex)
+   # lvk.fast_category_scraper()
         

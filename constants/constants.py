@@ -13,6 +13,7 @@ MERCANTS = {
     'abz-ast': 'e6af75c8-3f21-4bd0-8e74-184451d2ce26',
     'vlt-ala': '70e6a58b-bf0a-4d53-b2b8-af4e0399047f',
     'kvr-ast': '0b05ce6b-e701-4938-996b-726dbc541ebc',
+    'lvk-ala': 'a1aef55b-dc0b-4ade-9377-8c7b2987d230',
 }
 
 CITY_POSTFIX = {
@@ -151,5 +152,19 @@ DB_KVR_CATEGORY_CREATE_STR = f'''
                         name TEXT,
                         scrap_count INTEGER DEFAULT 0,
                         city TEXT
+                        ) 
+                    '''
+
+DB_LVK_CATEGORY_TABLE = 'lvk_category'
+DB_LVK_CATEGORY_CREATE_STR = f'''
+                        CREATE TABLE IF NOT EXISTS {DB_LVK_CATEGORY_TABLE}(
+                        sub_category_id TEXT,
+                        category_id TEXT,
+                        sub_category_name TEXT,
+                        category_name TEXT,
+                        sub_categoty_href TEXT,
+                        scrap_count INTEGER DEFAULT 0,
+                        city TEXT,
+                        key_column TEXT PRIMARY KEY
                         ) 
                     '''
