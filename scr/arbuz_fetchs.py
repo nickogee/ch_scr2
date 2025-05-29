@@ -1,7 +1,7 @@
 
 PAGE = '@PAGE@'
 SUB_CATALOG = '@SUBCATALOG@'
-LOUNCH_LIMIT = 3
+LOUNCH_LIMIT = 5
 CITY = '@CITY@'
 HREF = '@HREF@'
 
@@ -128,24 +128,29 @@ URL_FST = f"https://arbuz.kz/api/v1/shop/catalog/{SUB_CATALOG}?&limit=40&token="
 URL_NXT = f"https://arbuz.kz/api/v1/shop/catalog/{SUB_CATALOG}?page={PAGE}&limit=40&token="
 
 # -------------- изменяемое -- начало------
-PARAMS =  {
+PARAMS = {
   "headers": {
     "accept": "application/json, text/plain, */*",
-    "accept-language": "ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7",
+    "accept-language": "ru-RU,ru;q=0.9",
     "content-type": "application/json",
-    "sec-ch-ua": "\"Chromium\";v=\"118\", \"Google Chrome\";v=\"118\", \"Not=A?Brand\";v=\"99\"",
+    "cookie": "PHPSESSID=92a8548b16703e683904dc3eed108e4a; __cf_bm=142EiNoLkB75Cpx1ow7_c8DqxJSAqzGCWKzwW8covOc-1748495039-1.0.1.1-HYg3SsZBeNIvKy2e9c5eNs_5bHcOMc9xfspRWGaLifqQRoD4Ldd5FxISBPYj0_kyBU1ook9v8ZIZ3UuIg9Mq36hJzTNDpjH5aDoXagci6o4; _gcl_au=1.1.2048657469.1748495042; arbuz-kz_jwt_v3=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJiYjRkOTdmNC02OTM3LTRjNzMtYmI1My03ZTY5ZjYxM2RjM2IiLCJpc3MiOiJBTjRjR0FRampGY2dDN3RaaXNlaklMd1hzam1VWExQdyIsImlhdCI6MTc0ODQ5NTA0MywiZXhwIjo0OTAyMDk1MDQzLCJjb25zdW1lciI6eyJpZCI6ImYxYTRkOGY5LTU1ZDctNDIzNi05YmRhLTBjZmFmNGQ2NDdjZiIsIm5hbWUiOiJhcmJ1ei1rei53ZWIuZGVza3RvcCJ9LCJjaWQiOm51bGx9.-VcOh9YnB3nORNWSDqpXUvrAOifRd9fS00_1t5YBlWE; _gid=GA1.2.1464998987.1748495043; _fbp=fb.1.1748495043280.917971049606570219; _ym_uid=1748495043283419558; _ym_d=1748495043; _ym_isad=2; _tt_enable_cookie=1; _ttp=01JWD6T2Z8ZPW4QX1J4WAMY1PD_.tt.1; _ym_visorc=w; __stripe_mid=a9b2c30f-7689-45e1-8667-064c9018c3d2b74b0e; __stripe_sid=9541e6fb-02a2-404e-b1e3-c2afb3b42343e3c76f; _ga=GA1.1.327576258.1748495043; ttcsid=1748495043564::Sob2HaAnFKv-VqstXGeO.1.1748495088452; ttcsid_C3LVC6VB3D4L4OG4N5JG=1748495043563::7STRx9lg1_SWwlOjAibV.1.1748495208733; ttcsid_CHF1FEBC77UAIJ1A1D70=1748495043564::J10BTi7NVphRXbR71gr-.1.1748495208733; _ga_0X26SLE0CQ=GS2.1.s1748495042$o1$g1$t1748495221$j20$l0$h0; amp_9e7fe7=iypa0Mw-p1CgaXrysyYpHe...1isd6q13a.1isd6vhfv.0.0.0",
+    "priority": "u=1, i",
+    "referer": f"https://arbuz.kz{HREF}",
+    "sec-ch-ua": "\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Google Chrome\";v=\"134\"",
     "sec-ch-ua-mobile": "?0",
     "sec-ch-ua-platform": "\"macOS\"",
     "sec-fetch-dest": "empty",
     "sec-fetch-mode": "cors",
     "sec-fetch-site": "same-origin",
-    "x-locale": "ru",
-    "cookie": "_ym_uid=1684821805258414270; _ym_d=1684821805; __stripe_mid=d9479f81-e1ab-429e-bd1d-7a5f769afc318461b1; arbuz-kz_jwt_v3=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJmNGNlOGY4NS0xYTZiLTQ2NWEtYTExMi0xY2VkZTg3NDYzZDEiLCJpc3MiOiJZSDhzWmdQOExTUGR4eFhsUFZoRWdoOE5UdXc2SlJLZCIsImlhdCI6MTY4NDgyODkwNSwiZXhwIjo0ODM4NDI4OTA1LCJjb25zdW1lciI6eyJpZCI6ImU1YzRlYTA1LWY4ZTgtNDJiZC1iMDJhLWNmMzNlODAyZjA5NiIsIm5hbWUiOiJhcmJ1ei1rei53ZWIuZGVza3RvcCJ9LCJjaWQiOm51bGx9.LiA23DwWoe2U3UqcTymHm5HmkrHsOodhlwOG0oMheHM; PHPSESSID=2d40997f17ed47991444869356705cfc; mindboxDeviceUUID=b5252e82-08f4-40d7-8fdf-75bf7b4ea57a; directCrm-session=%7B%22deviceGuid%22%3A%22b5252e82-08f4-40d7-8fdf-75bf7b4ea57a%22%7D; _gcl_au=1.1.1664444597.1698898538; _gid=GA1.2.90459052.1698898538; _fbp=fb.1.1698898538747.1873771590; _ym_isad=2; _tt_enable_cookie=1; _ttp=kDUI5tzmSOmtcnN0AZ2Tmg6J4Sx; _ga=GA1.2.688556888.1698898538; _ga_0X26SLE0CQ=GS1.1.1698906573.2.0.1698906573.60.0.0",
-    "Referer": f"https://arbuz.kz/ru/{HREF}",
-    "Referrer-Policy": "strict-origin-when-cross-origin"
+    "x-locale": "ru"
   },
+  "referrer": f"https://arbuz.kz{HREF}",
+  "referrerPolicy": "same-origin",
   "body": None,
-  "method": "GET"
-}
+  "method": "GET",
+  "mode": "cors",
+  "credentials": "include"
+};
+
 # -------------- изменяемое -- конец------
 ###############

@@ -40,3 +40,5 @@ def format_name(raw_name:str):
     name = name.strip()
     return name.capitalize()
 
+def get_new_session():
+    return requests.Session()

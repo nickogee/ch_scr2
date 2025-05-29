@@ -21,7 +21,7 @@ class ArbuzApiScraper():
     def fill_rezult(self):
 
         url = URL_FST.replace(SUB_CATALOG, self.catalog_number)
-        PARAMS['headers']['Referer'] = PARAMS['headers']['Referer'].replace(HREF, self.catalog_href)
+        PARAMS['referrer'] = PARAMS['referrer'].replace(HREF, self.catalog_href)
         fst_fetch = get_fetch(url, PARAMS)
         try:
             category = fst_fetch.json()['data']['name']
