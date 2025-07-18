@@ -1,8 +1,9 @@
 import sqlite3 
 from copy import deepcopy
-from scr.glovo_fetchs import CATEGORIES_GLV
+# from scr.glovo_fetchs import CATEGORIES_GLV
 from scr.arbuz_fetchs import CATEGORIES_ABZ, CITY
 from constants.constants import CITYS_LS
+from scr.glovo_category_parser import create_glovo_category_table
 
 
 
@@ -74,9 +75,15 @@ class DBSqlite():
 
             items_ls.append(st)
 
+        if isinstance(product_dict[self.pk_column], str):
+            where_value = "'" + product_dict[self.pk_column] + "'"
+        else:
+            where_value = str(product_dict[self.pk_column])
+
         items_str = ', '.join(items_ls)
         try:
-            sql_txt = f'''UPDATE {self.table_name} SET {items_str} WHERE  {self.pk_column} = {"'" + product_dict[self.pk_column] + "'"}'''
+            # sql_txt = f'''UPDATE {self.table_name} SET {items_str} WHERE  {self.pk_column} = {"'" + product_dict[self.pk_column] + "'"}'''
+            sql_txt = f'''UPDATE {self.table_name} SET {items_str} WHERE  {self.pk_column} = {where_value}'''
             self.cursor.execute(sql_txt)
             self.connect.commit()
         except Exception as ex:
@@ -92,16 +99,21 @@ class DBSqlite():
                 self.insert_data(product_dict)
     
 
-    def get_next_category_glv(self, order_by:str):
+    def get_next_category_glv(self, order_by:str, where_condition: str = 'TRUE'):
         try:
-            sql_txt = f'''SELECT * FROM {self.table_name} ORDER BY {order_by} LIMIT 1'''
-            result = self.cursor.execute(sql_txt).fetchone()
-            result_dct = {
-                    'title': result[0],
-                    'slug': result[1],
-                    'scrap_count': result[2],
-                    }
-            return result_dct
+            sql_txt = f'''SELECT * FROM {self.table_name} WHERE {where_condition} ORDER BY {order_by} LIMIT 10'''
+            result = self.cursor.execute(sql_txt).fetchall()
+            result_ls = []
+            for cat in result:
+                result_ls.append({
+                        'title': cat[1],
+                        'path': cat[2],
+                        'parent': cat[3],
+                        'city': cat[4],
+                        'scrap_count': cat[5],
+                        'id': cat[0],
+                        })
+            return result_ls
         except Exception as ex:
             print('Не удалось выполнить запрос:', sql_txt, f'По причине: {ex}', sep='\n')
             return None
@@ -409,16 +421,39 @@ def get_next_categoy_glv(db_path, table_name, table_create_str, pk_column):
     db_ses = DBSqlite(db_path, table_name, table_create_str, pk_column)
     # создадим и заполним таблицу категорий glv, если ее нет
     if not db_ses.table_exists():
-        db_ses.crate_table()
-        for cat_dict in CATEGORIES_GLV:
-            db_ses.insert_data(cat_dict)
+        create_glovo_category_table(db_path, table_name, table_create_str)
 
-    result_dct = db_ses.get_next_category_glv('scrap_count')
-    result_dct_to_update = result_dct.copy()
-    result_dct_to_update['scrap_count'] += 1
+    result_ls = db_ses.get_next_category_glv(order_by='scrap_count, parent', where_condition= 'parent is not NULL')
+    return result_ls
 
-    db_ses.update_data(result_dct_to_update)
-    return result_dct
+def get_fast_category_glv(db_path, table_name, table_create_str, pk_column):
+    db_ses = DBSqlite(db_path, table_name, table_create_str, pk_column)
+    # создадим и заполним таблицу категорий glv, если ее нет
+    if not db_ses.table_exists():
+        create_glovo_category_table(db_path, table_name, table_create_str)
+
+    result_ls = db_ses.get_next_category_glv(order_by='scrap_count', where_condition= "parent = 'Фрукты и Овощи'")
+    return result_ls
+
+
+def update_category_glv(update_ls, db_path, table_name, pk_column):
+    db_ses = DBSqlite(db_path, table_name, '', pk_column)
+    for cat_dct in update_ls:
+        db_ses.update_data(cat_dct)
+
+# def update_parent_category_glv(db_path, table_name, pk_column, filter_tpl): 
+#     columns = 'scrap_count'
+#     db_ses = DBSqlite(db_path, table_name, None, pk_column)
+#     result_ls = db_ses.get_data(columns=columns, filter_tpl=filter_tpl).fetchall()
+#     sc_ls = [i[0] for i in result_ls]
+#     sc_min = min(sc_ls)
+
+#     cat_dct =   {
+#             'id': filter_tpl[1],
+#             'scrap_count': sc_min 
+#                 }
+    
+#     db_ses.update_data(cat_dct)
 
 
 # --------------------- Arbuz --------------------

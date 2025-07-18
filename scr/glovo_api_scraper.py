@@ -1,31 +1,70 @@
-from scr.glovo_fetchs import PARAMS, URL_SERV, URL_FST, SLUG
+from typing import Any, Dict, List, Optional
 import datetime
+from scr.glovo_fetchs import PARAMS, URL_SERV
 from scr.share_functions import get_fetch, rand_pause
-from scr.database_worker import upload_to_db, get_next_categoy_glv
-from constants.constants import DB_PATH, DB_ROW_DATA_TABLE, DB_ROW_DATA_CREATE_STR, MERCANTS,\
-                                        DB_GLV_CATEGORY_TABLE, DB_GLV_CATEGORY_CREATE_STR, CITY_POSTFIX
-                                    
+from scr.database_worker import upload_to_db, get_next_categoy_glv, get_fast_category_glv, update_category_glv
+from constants.constants import DB_PATH, DB_ROW_DATA_TABLE, DB_ROW_DATA_CREATE_STR, MERCANTS, DB_GLV_CATEGORY_TABLE, DB_GLV_CATEGORY_CREATE_STR, CITY_POSTFIX
 
 
-class GlovoApiScraper():
+def clean_string(text: Optional[str]) -> str:
+    """Remove unwanted characters from a string."""
+    if not text:
+        return ''
+    for ch in ['«', '»', '"', "'"]:
+        text = text.replace(ch, '')
+    return text
 
-    def __init__(self, cat_dct):
-        self.categorie_dict = cat_dct
-        self.rezult = []
+
+def build_product_dict(product: Dict[str, Any], sub_category_name: str, category_full_path: str, city: str, category_url: str) -> Dict[str, Any]:
+    """Build a product dictionary for upload."""
+    data = product.get('data', {})
+    title = clean_string(data.get('name'))
+    imageUrl = data.get('imageUrl', '')
+    url_picture = imageUrl if imageUrl else ''
+    prev_price = data.get('price', 0)
+    promotion = data.get('promotion')
+    price = promotion.get('price') if promotion else 0
+    mercant_short_name = 'glv' + '-' + CITY_POSTFIX[city]
+    return {
+        'mercant_id': MERCANTS[mercant_short_name],
+        'mercant_name': mercant_short_name,
+        'product_id': str(city + '_' + str(data.get('id'))),
+        'id': str(data.get('id')),
+        'title': title,
+        'description': '',
+        'url': f'https://glovoapp.com/kz/ru/almaty/glovo-express-ala/?content={category_url}',
+        'url_picture': url_picture,
+        'time_scrap': str(datetime.datetime.now().isoformat()),
+        'sub_category': sub_category_name,
+        'category_full_path': category_full_path,
+        'brand': '',
+        'cost': price if price else prev_price,
+        'prev_cost': prev_price if price else 0,
+        'measure': '',
+        'city': city,
+    }
+
+
+class GlovoApiScraper:
+    """
+    Scraper for Glovo API categories and products.
+    """
+    def __init__(self, cat_ls: Dict[str, Any]) -> None:
+        self.rezult: List[Dict[str, Any]] = []
         self.df = None
-        self.date_time_now = datetime.datetime.now()
-        self.head_response = get_fetch(URL_FST.replace(SLUG, cat_dct['slug']), PARAMS)
-        self.city = 'almaty'
-        self.categories = []
-        head_resp_json = self.head_response.json()
+        self.date_time_now: datetime.datetime = datetime.datetime.now()
+        self.city: str = 'almaty'
+        self.categories: List[Dict[str, Any]] = cat_ls
+
+    def _extract_categories(self, head_response: Any, cat_dct: Dict[str, Any]) -> List[Dict[str, Any]]:
+        head_resp_json = head_response.json()
         data = head_resp_json.get('data')
         if data:
             body = data.get('body')
             if body and len(body) > 0:
                 body_data = body[0].get('data')
-
                 if body_data:
-                    self.categories = body_data['elements']
+                    return body_data['elements']
                 else:
                     print('Не найден элемент "elements"')
             else:
@@ -33,123 +72,83 @@ class GlovoApiScraper():
         else:
             title = cat_dct['title']
             slug = cat_dct['slug']
-            print(f'Не найден элемент "data" для категории {title} ({slug})')  
-          
+            print(f'Не найден элемент "data" для категории {title} ({slug})')
+        return []
 
-        # self.categories = self.head_response.json()['data']['body'][0]['data']['elements']
-
-    def fill_rezult(self):
-
+    def fill_rezult(self) -> None:
+        """
+        Populate the result list with product data from all categories and subcategories.
+        """
         for curr_category in self.categories:
-
+            category_name = curr_category['title']
+            parent_category_name = curr_category['parent']
             try:
-                category_name = curr_category['data']['title']
-                cat_route = curr_category['data']['action']['data']['path']
-            except Exception:
-                print(f'Не удалось получить category_name или cat_route')
+                response = get_fetch(f"{URL_SERV}{curr_category['path']}", PARAMS)
+                response_json = response.json()
+                response_data = response_json.get('data', {})
+                category_url = response_data.get('activeElementSlug', '')
+                category_groups = response_data.get('body', [])
+                if not category_groups:
+                    print(f'Нет данных по подкатегориям для {category_name}')
+                    continue
+                self._process_category_groups(category_groups, category_name, category_url, parent_category_name)
+            except Exception as ex:
+                print(f"Ошибка при обработке категории '{category_name}': {ex}")
                 continue
+            finally:
+                rand_pause()
 
-            response = get_fetch(URL_SERV + cat_route, PARAMS)
-            response_data = response.json()['data']
-            category_url = response_data['activeElementSlug']
+            curr_category['scrap_count'] += 1
 
-            category_groups = response_data['body']
+    def _process_category_groups(self, category_groups: List[Dict[str, Any]], category_name: str, category_url: str, parent_category_name: str) -> None:
+        page_num = 1
+        for sub_cat in category_groups:
+            sub_category_name = sub_cat['data'].get('title')
+            products = sub_cat['data'].get('elements')
+            if not products:
+                continue
+            category_full_path = parent_category_name + '/' + category_name + '/' + sub_category_name
+            print(f'Glovo - запрос {page_num} из {len(category_groups)} по {category_full_path}')
+            for product in products:
+                self.rezult.append(build_product_dict(product, sub_category_name, category_full_path, self.city, category_url))
+            page_num += 1
 
-            page_num = 1
-            for sub_cat in category_groups:
-                sub_category_name = sub_cat['data']['title']
-                products = sub_cat['data']['elements']
-
-                category_full_path = self.categorie_dict['title'] + '/' + category_name + '/' + sub_category_name
-                print(f'Glovo - запрос {page_num} из {len(category_groups)} по {category_full_path}')
-
-                for product in products:
-
-                    title = product['data']['name']
-                    title = title.replace('«', '')
-                    title = title.replace('»', '')
-                    title = title.replace('"', '')
-                    title = title.replace("'", '')
-                    
-                    data = product.get('data')
-                    if data:
-                        imageUrl = data.get('imageUrl')
-                        if imageUrl:
-                            url_picture = imageUrl
-                        else:
-                            url_picture = ''
-                        
-                        prev_price = data.get('price')
-                    else:
-                        url_picture = ''
-                        prev_price = 0
-
-                    promotion = data.get('promotion')
-                    if promotion:
-                        price = promotion.get('price')
-                    else:
-                        price = 0
-
-                    mercant_short_name = 'glv' + '-' + CITY_POSTFIX[self.city]
-
-                    l = {
-                        'mercant_id': MERCANTS[mercant_short_name],
-                        'mercant_name': mercant_short_name,
-                        'product_id': str(self.city + '_' + str(product['data']['id'])),
-                        'id': str(product['data']['id']),
-                        'title': title,
-                        'description': '',
-                        # здесь отсутствует url товара (карточки товара), по этому сюда поместим
-                        # url категории (он существует)
-                        'url': f'https://glovoapp.com/kz/ru/almaty/glovo-express-ala/?content={category_url}',
-                        'url_picture': url_picture,
-                        'time_scrap': str(datetime.datetime.now().isoformat()),
-                        'sub_category': sub_category_name,
-                        'category_full_path': category_full_path,
-                        'brand': '',
-                        # 'cost': product['data']['price'],
-                        'cost': price if price else prev_price,
-                        'prev_cost': prev_price if price else 0,
-                        # здесь отсутствует информация о единицах изменения
-                        'measure': '',
-                        'city': self.city,
-                    }
-
-                    self.rezult.append(l) 
-
-                page_num += 1 
-
-            rand_pause()
-            
-
-    def __upload_to_db(self):
+    def __upload_to_db(self) -> None:
+        """
+        Upload the scraped product data to the database.
+        """
         print(f'Glovo {self.city} - получено {len(self.rezult)} sku')
         upload_to_db(self.rezult, DB_PATH, DB_ROW_DATA_TABLE, DB_ROW_DATA_CREATE_STR, 'product_id')
 
-    def start(self):
+        # обновляем scrap_count для "спарсеных" категорий 2-го уровня
+        update_category_glv(self.categories, DB_PATH, DB_GLV_CATEGORY_TABLE, 'id')
+
+
+    def start(self) -> None:
+        """
+        Start the scraping process: fill results and upload to DB.
+        """
         self.fill_rezult()
         self.__upload_to_db()
 
 
-def fast_category_scraper():
-    
-    # Фрукты и Овощи
-    fast_category_dct = {'slug': "frukty-i-ovoshchi-sc.295590",
-                         'title': 'Фрукты и Овощи'}
-
-    glovo = GlovoApiScraper(fast_category_dct)
+def fast_category_scraper() -> None:
+    """
+    Run the scraper for a predefined fast category (Fruits and Vegetables).
+    """
+    fast_category_ls = get_fast_category_glv(DB_PATH, DB_GLV_CATEGORY_TABLE, DB_GLV_CATEGORY_CREATE_STR, 'id')
+    glovo = GlovoApiScraper(fast_category_ls)
     glovo.start()
 
 
-def main():
-
-    next_caterory_dct = get_next_categoy_glv(DB_PATH, DB_GLV_CATEGORY_TABLE, DB_GLV_CATEGORY_CREATE_STR, 'slug')
-
-    glovo = GlovoApiScraper(next_caterory_dct)
+def main() -> None:
+    """
+    Main entry point for the Glovo scraper.
+    """
+    next_caterory_ls = get_next_categoy_glv(DB_PATH, DB_GLV_CATEGORY_TABLE, DB_GLV_CATEGORY_CREATE_STR, 'id')
+    glovo = GlovoApiScraper(next_caterory_ls)
     glovo.start()
-
-
 
 
 if __name__ == '__main__':
-    main()
+    main() 

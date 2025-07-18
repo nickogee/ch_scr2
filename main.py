@@ -2,9 +2,10 @@
 # import scr.xml_worker as xmlw
 # import scr.glovo_api_scraper as glv
 # import scr.magnum_api_scraper as mgm
-# import scr.magnum_e_api_scraper as mgm_e
+import scr.magnum_e_api_scraper as mgm_e
 # import scr.airba_api_scraper as air
 # import scr.volt_api_scraper as vlt
+import scr.volt_api_scraper_refactored as vlt_ref
 # import scr.klever_api_scraper as kvr
 # import scr.lavka_api_scraper as lvk
 # import sys
@@ -14,43 +15,45 @@ if __name__ == '__main__':
    pass
    # abz.fast_category_scraper(sys.argv)
    # try:
-   #    abz.main()
+   #    abz_ref.main()
    # except Exception as ex:
    #    print(ex)
     
    #  xmlw.make_data_file()
     
-   # # glv.fast_category_scraper()
+   # glv_ref.fast_category_scraper()
    # try:
-   #    glv.main()
+   # glv_ref.main()
+      # glv.main()
    # except Exception as ex:
    #    print(ex)
     
    # # mgm.fast_category_scraper()
    # try:
-   #    mgm.main()
+   # mgm_ref.main()
    # except Exception as ex:
    #    print(ex)
 
    # try:
-   #    mgm_e.main()
+   # mgm_e.main()
    # except Exception as ex:
    #    print(ex)
 
    # try:
-   #    kvr.main()
+   #    kvr_ref.main()
    # except Exception as ex:
    #    print(ex)
+
    # # kvr.fast_category_scraper('almaty')
     
-   # # air.fast_category_scraper()
+   # air.fast_category_scraper()
    # try:
-   #    air.main()
+   #    air_ref.main()
    # except Exception as ex:
    #    print(ex)
 
    # try:
-   #    vlt.main()
+   vlt_ref.main()
    # except Exception as ex:
    #    print(ex)
    # vlt.fast_category_scraper()

@@ -72,11 +72,13 @@ DB_ROW_DATA_CREATE_STR = f'''
 
 DB_GLV_CATEGORY_TABLE = 'glv_category'
 DB_GLV_CATEGORY_CREATE_STR = f'''
-                        CREATE TABLE IF NOT EXISTS {DB_GLV_CATEGORY_TABLE}( 
-                        title TEXT, 
-                        slug TEXT PRIMARY KEY,
-                        scrap_count INTEGER DEFAULT 0,
-                        city TEXT
+                        CREATE TABLE {DB_GLV_CATEGORY_TABLE}( 
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        title TEXT,
+                        path TEXT,
+                        parent TEXT,
+                        city TEXT DEFAULT 'almaty',
+                        scrap_count INTEGER DEFAULT 0
                         ) 
                     '''
 
