@@ -11,6 +11,7 @@ import argparse
 def parse_args():
     parser = argparse.ArgumentParser(description="get scr data")
     parser.add_argument("--limit", type=int, default=1, help="limit of lounching script")
+    parser.add_argument("--city", type=str, default='almaty', help="city name")
     return parser.parse_args()
 
 
@@ -171,7 +172,8 @@ def main() -> None:
     Main entry point for the Arbuz scraper.
     """
     args = parse_args()
-    city = (sys.argv[1] if len(sys.argv) > 1 else 'almaty')
+    # city = (sys.argv[1] if len(sys.argv) > 1 else 'almaty')
+    city = (args.city if args.city else 'almaty')
     print(f'Run for city - {city}')
     # for i in range(LOUNCH_LIMIT):
     for i in range(args.limit):

@@ -13,6 +13,7 @@ import argparse
 def parse_args():
     parser = argparse.ArgumentParser(description="get mgm data")
     parser.add_argument("--limit", type=int, default=1, help="limit of lounching script")
+    parser.add_argument("--city", type=str, default='astana', help="city name")
     return parser.parse_args()
 
 
@@ -206,7 +207,8 @@ def fast_category_scraper(city):
 
 def main():
     args = parse_args()
-    city = sys.argv[1] if len(sys.argv) > 1 else 'astana'
+    # city = sys.argv[1] if len(sys.argv) > 1 else 'astana'
+    city = (args.city if args.city else 'astana')
     print(f'Run for city - {city}')
     for i in range(args.limit):
         print(f'Запуск #{i + 1}')
