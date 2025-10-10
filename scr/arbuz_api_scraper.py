@@ -5,6 +5,13 @@ from scr.arbuz_fetchs import PARAMS, URL_NXT, URL_FST, PAGE, SUB_CATALOG, LOUNCH
 from scr.share_functions import get_fetch, rand_pause
 from scr.database_worker import upload_to_db, get_next_categoy_abz
 from constants.constants import DB_PATH, DB_ROW_DATA_TABLE, DB_ROW_DATA_CREATE_STR, MERCANTS, DB_ABZ_CATEGORY_CREATE_STR, DB_ABZ_CATEGORY_TABLE, CITY_POSTFIX
+import argparse
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="get scr data")
+    parser.add_argument("--limit", type=int, default=1, help="limit of lounching script")
+    return parser.parse_args()
 
 
 def clean_string(text: Optional[str]) -> str:
@@ -163,9 +170,11 @@ def main() -> None:
     """
     Main entry point for the Arbuz scraper.
     """
+    args = parse_args()
     city = (sys.argv[1] if len(sys.argv) > 1 else 'almaty')
     print(f'Run for city - {city}')
-    for i in range(LOUNCH_LIMIT):
+    # for i in range(LOUNCH_LIMIT):
+    for i in range(args.limit):
         print(f'Запуск #{i + 1}')
         next_caterory_dct = get_next_categoy_abz(
             db_path=DB_PATH,

@@ -8,6 +8,14 @@ from scr.database_worker import upload_to_db, table_exists, get_next_categoy_lis
 from constants.constants import DB_PATH, DB_MGM_CATEGORY_TABLE, DB_MGM_CATEGORY_CREATE_STR, MERCANTS, \
     DB_ROW_DATA_CREATE_STR, DB_ROW_DATA_TABLE, CITY_POSTFIX
 
+import argparse
+
+def parse_args():
+    parser = argparse.ArgumentParser(description="get mgm data")
+    parser.add_argument("--limit", type=int, default=1, help="limit of lounching script")
+    return parser.parse_args()
+
+
 
 class MagnumScraper:
     """
@@ -197,10 +205,13 @@ def fast_category_scraper(city):
 
 
 def main():
+    args = parse_args()
     city = sys.argv[1] if len(sys.argv) > 1 else 'astana'
     print(f'Run for city - {city}')
-    scraper = MagnumScraper(city=city)
-    scraper.start()
+    for i in range(args.limit):
+        print(f'Запуск #{i + 1}')
+        scraper = MagnumScraper(city=city)
+        scraper.start()
 
 
 if __name__ == '__main__':
